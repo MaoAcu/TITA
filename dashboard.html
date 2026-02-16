@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Dashboard - T.I.T.A Catering Service</title>
+    
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+    <!-- Modal confirmación para eliminar -->
+    <div id="deleteModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-icon">
+                <i class="fa-solid fa-trash-can"></i>
+            </div>
+            
+            <div class="modal-body">
+                <h3 id="deleteModalTitle">¿Eliminar este elemento?</h3>
+                <p id="deleteModalMessage">Esta acción no se puede deshacer. El ítem desaparecerá permanentemente.</p>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeDeleteModal()">Cancelar</button>
+                <button class="btn-confirm" id="confirmDeleteBtn">Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal informativo -->
+    <div id="infoModal" class="modal-overlay">
+        <div class="modal-card modal-info">
+            <div class="modal-icon" id="infoModalIcon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            
+            <div class="modal-body">
+                <h3 id="infoModalTitle">Éxito</h3>
+                <p id="infoModalMessage">Operación completada correctamente.</p>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-confirm" onclick="closeInfoModal()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para agregar/editar categoría -->
+    <div id="categoriaModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="categoriaModalTitle">Nueva Categoría</h3>
+                <span class="close-modal" onclick="closeCategoriaModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="categoriaForm">
+                    <input type="hidden" id="categoriaId">
+                    
+                    <div class="form-group">
+                        <label for="categoriaNombre">Nombre de la categoría</label>
+                        <input type="text" id="categoriaNombre" required placeholder="Ej: Entradas">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="categoriaIcono">Icono</label>
+                        <select id="categoriaIcono" required>
+                            <option value="fa-utensils">🍽️ Plato</option>
+                            <option value="fa-tags">🏷️ Promociones</option>
+                            <option value="fa-beer">🍺 Cerveza</option>
+                            <option value="fa-glass-cheers">🥂 Cóctel</option>
+                            <option value="fa-bread-slice">🍞 Pan</option>
+                            <option value="fa-seedling">🌱 Ensalada</option>
+                            <option value="fa-child">🧒 Niño</option>
+                            <option value="fa-hamburger">🍔 Hamburguesa</option>
+                            <option value="fa-ice-cream">🍨 Helado</option>
+                            <option value="fa-coffee">☕ Café</option>
+                            <option value="fa-pizza-slice">🍕 Pizza</option>
+                            <option value="fa-fish">🐟 Pescado</option>
+                            <option value="fa-drumstick-bite">🍗 Pollo</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel" onclick="closeCategoriaModal()">Cancelar</button>
+                        <button type="submit" class="btn-save">Guardar Categoría</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+        
+        <div class="sidebar-overlay"></div>
+        
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h2><i class="fas fa-utensils"></i> T.I.T.A Catering</h2>
+                <p class="restaurant-subtitle">Panel de Control</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="sidebar-section-title">PRODUCTOS POR CATEGORÍA</div>
+                <ul id="categoriasList">
+                 
+                </ul>
+                
+                <div class="sidebar-divider"></div>
+                
+                <div class="sidebar-section-title">ADMINISTRACIÓN</div>
+                <ul>
+                    <li id="menuCategorias" data-section="categorias">
+                        <i class="fas fa-folder"></i>
+                        <span>Gestionar Categorías</span>
+                    </li>
+                    <li data-section="config">
+                        <i class="fas fa-cog"></i>
+                        <span>Configuración</span>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user-circle"></i>
+                    <div>
+                        <p class="user-name">Administrador</p>
+                        <p class="user-role">Dueño</p>
+                    </div>
+                </div>
+                <button id="logoutBtn" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+             
+            <header class="top-bar">
+                <button id="menuToggle" class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <h1 id="sectionTitle">Gestionar Categorías</h1>
+                
+                <div class="header-actions">
+                    <button id="saveAllBtn" class="btn-save" style="display: none;">
+                        <i class="fas fa-save"></i> Guardar Cambios
+                    </button>
+                </div>
+            </header>
+
+            <!-- Sección de categorías  -->
+            <div id="categoriasSection" class="content-section" style="display: block;">
+                <div class="section-header">
+                    <h2><i class="fas fa-folder"></i> Todas las Categorías</h2>
+                    <button id="btnNuevaCategoriaHeader" class="btn-add-item">
+                        <i class="fas fa-plus"></i> Nueva Categoría
+                    </button>
+                </div>
+                <div id="categoriasGrid" class="categorias-grid">
+                 
+                </div>
+            </div>
+
+            
+            <div id="productosSection"></div>
+
+            <!-- Sección de Configuración -->
+            <div id="configSection" class="content-section" style="display: none;">
+                <div class="config-container">
+                    <h2><i class="fas fa-cog"></i> Configuración General</h2>
+                    
+                    <div class="config-grid">
+                        <div class="config-card">
+                            <h3><i class="fas fa-store"></i> Información del Restaurante</h3>
+                            <div class="config-form">
+                                <div class="form-group">
+                                    <label>Nombre del Restaurante</label>
+                                    <input type="text" id="restaurantName" placeholder="Ej: T.I.T.A Catering Service">
+                                </div>
+                                <div class="form-group">
+                                    <label>Descripción</label>
+                                    <textarea id="restaurantDescription" rows="3" placeholder="Breve descripción del restaurante"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Horario</label>
+                                    <input type="text" id="restaurantHours" placeholder="Ej: Lunes a Viernes 9:00-22:00">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="config-card">
+                            <h3><i class="fas fa-user-shield"></i> Seguridad</h3>
+                            <div class="config-form">
+                                <div class="form-group">
+                                    <label>Cambiar Contraseña</label>
+                                    <input type="password" id="newPassword" placeholder="Nueva contraseña">
+                                </div>
+                                <div class="form-group">
+                                    <label>Confirmar Contraseña</label>
+                                    <input type="password" id="confirmPassword" placeholder="Confirmar nueva contraseña">
+                                </div>
+                                <button id="saveConfigBtn" class="btn-save">
+                                    <i class="fas fa-save"></i> Guardar Configuración
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botón flotante para volver a categorías (visible cuando no estás en categorías) -->
+    <button id="fabCategorias" class="fab-categorias" style="display: none;" onclick="switchSection('categorias')">
+        <i class="fas fa-folder"></i>
+        <span>Gestionar Categorías</span>
+    </button>
+
+    <!-- Modal para editar/agregar items -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Editar Item</h3>
+                <span class="close-modal" onclick="closeItemModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="itemForm">
+                    <input type="hidden" id="itemId">
+                    <input type="hidden" id="itemCategoria">
+                    
+                    <div class="form-group">
+                        <label for="itemName">Nombre del Producto</label>
+                        <input type="text" id="itemName" required placeholder="Ej: Hamburguesa Especial">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="itemDescription">Descripción</label>
+                        <textarea id="itemDescription" rows="3" placeholder="Describe el producto, ingredientes, etc."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="itemPrice">Precio (₡)</label>
+                        <div class="price-input">
+                            <span class="currency">₡</span>
+                            <input type="number" id="itemPrice" step="0.01" min="0" required placeholder="0.00">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="itemImage">URL de la Imagen</label>
+                        <input type="text" id="itemImage" placeholder="https://ejemplo.com/imagen.jpg">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="itemStatus">Estado</label>
+                        <div class="status-toggle">
+                            <button type="button" class="status-btn active" data-status="active">Activo</button>
+                            <button type="button" class="status-btn" data-status="inactive">Inactivo</button>
+                            <input type="hidden" id="itemStatus" value="active">
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel" onclick="closeItemModal()">Cancelar</button>
+                        <button type="submit" class="btn-save">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
