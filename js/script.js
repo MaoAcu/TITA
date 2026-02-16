@@ -117,7 +117,7 @@ function renderizarMenu(productosAMostrar) {
   });
 
   const nombresCategoria = { 'entradas': 'Entradas', 'fuertes': 'Platos fuertes', 'bebidas': 'Bebidas tradicionales' };
-  const iconosCategoria = { 'entradas': 'fa-seedling', 'fuertes': 'fa-utensils', 'bebidas': 'fa-mug-hot' };
+  const iconosCategoria = { 'entradas': 'fa-utensils', 'fuertes': 'fa-bowl-food', 'bebidas': 'fa-mug-hot' };
 
   let html = '';
   
@@ -132,7 +132,7 @@ function renderizarMenu(productosAMostrar) {
     items.forEach(p => {
       html += `
         <div class="menu-card" data-id="${p.id}" onclick="abrirModalImagenPorId(${p.id})">
-          <img class="card-img" src="${p.imagen}" alt="${p.nombre}" onerror="this.src='https://via.placeholder.com/400x300?text=Imagen+no+disponible'">
+          <img class="card-img" src="${p.imagen}" alt="${p.nombre}" onerror="this.src='images/LogoT.I.T.A.jpeg'">
           <div class="card-content">
             <h4>${p.nombre}</h4>
             <p class="card-desc">${p.descripcion}</p>
