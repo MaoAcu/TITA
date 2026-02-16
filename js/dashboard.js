@@ -6,7 +6,8 @@ const nombresCategoria = {
     'bebidas': 'Bebidas',
     'promos': 'Promociones'
 };
-
+ 
+ 
 // ===== DATOS DE EJEMPLO =====
 let categorias = [
     { id: 1, nombre: 'Entradas', icono: 'fa-bread-slice', slug: 'entradas' },
@@ -136,7 +137,9 @@ function renderCategorias() {
             <span>${cat.nombre}</span>
         </li>
     `).join('') + `
+         
         <li class="sidebar-divider" style="height: 1px; background: var(--gray); margin: 10px 20px; pointer-events: none;"></li>
+        <div class="sidebar-section-title">ADMINISTRACIÓN</div>
         <li id="menuCategorias" data-section="categorias">
             <i class="fas fa-folder"></i>
             <span>Gestionar Categorías</span>
