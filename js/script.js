@@ -74,25 +74,29 @@ function initCategoryFilters() {
   });
 }
 
-// Filtrar productos por categoría y búsqueda
 function filtrarProductos() {
   let productosFiltrados = productos;
-  
+
   if (filtroCategoria !== 'todas') {
-    productosFiltrados = productosFiltrados.filter(p => p.categoria === filtroCategoria);
+    productosFiltrados = productosFiltrados.filter(
+      p => p.categoria === filtroCategoria
+    );
   }
-  
-  if (busqueda) {
+
+  if (busqueda !== '') {
     const busquedaLower = busqueda.toLowerCase();
-    productosFiltrados = productosFiltrados.filter(p => 
-      p.nombre.toLowerCase().includes(busquedaLower) || 
+    productosFiltrados = productosFiltrados.filter(p =>
+      p.nombre.toLowerCase().includes(busquedaLower) ||
       p.descripcion.toLowerCase().includes(busquedaLower)
     );
   }
-  
+
   renderizarMenu(productosFiltrados);
 }
-
+searchInput.addEventListener('input', () => {
+  busqueda = searchInput.value.trim();
+  filtrarProductos();
+});
 // Abrir modal de imagen
 function abrirModalImagen(producto) {
   modalImage.src = producto.imagen;
