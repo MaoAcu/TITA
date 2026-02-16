@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>T.I.T.A · Catering costarricense</title>
+  <!-- Fuente moderna Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* ===== RESET Y VARIABLES ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #f75c2f;       /* naranja vibrante */
+      --primary-dark: #e04a1e;
+      --verde: #2b7a4b;         /* verde naturaleza */
+      --light: #fcf9f7;
+      --white: #ffffff;
+      --dark: #1f2a2f;
+      --gray: #f0eae6;
+      --shadow: 0 20px 35px -15px rgba(0,0,0,0.05);
+      --shadow-hover: 0 25px 40px -15px rgba(247,92,47,0.2);
+      --radius: 28px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--light);
+      color: var(--dark);
+      line-height: 1.5;
+    }
+
+    /* ===== HEADER FIJO CON LOGO ===== */
+    .header {
+      position: sticky;
+      top: 0;
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      padding: 1rem 6%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 100;
+      border-bottom: 1px solid rgba(0,0,0,0.03);
+    }
+
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .logo-img {
+      height: 50px;
+      width: auto;
+      border-radius: 30px;
+      object-fit: cover;
+    }
+    .logo-text {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .logo-text span {
+      color: var(--primary);
+    }
+    .logo-tagline {
+      font-size: 0.9rem;
+      color: #5b4f47;
+      border-left: 2px solid var(--primary);
+      padding-left: 12px;
+      margin-left: 5px;
+    }
+
+    /* navegación */
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      align-items: center;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--dark);
+      font-weight: 600;
+      font-size: 1rem;
+      border-bottom: 2px solid transparent;
+      padding-bottom: 4px;
+      transition: 0.2s;
+    }
+    .nav-links a:hover,
+    .nav-links a.active {
+      border-bottom-color: var(--primary);
+    }
+
+    .cart-icon {
+      position: relative;
+      font-size: 1.5rem;
+      color: var(--dark);
+    }
+    .cart-count {
+      position: absolute;
+      top: -10px;
+      right: -12px;
+      background: var(--primary);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 3px 7px;
+      border-radius: 40px;
+      border: 2px solid white;
+    }
+
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      cursor: pointer;
+    }
+    .menu-toggle span {
+      width: 28px;
+      height: 2px;
+      background: var(--dark);
+      border-radius: 10px;
+    }
+
+    /* ===== RESPONSIVE HEADER ===== */
+    @media (max-width: 700px) {
+      .logo-tagline {
+        display: none;
+      }
+      .menu-toggle {
+        display: flex;
+      }
+      .nav-links {
+        position: fixed;
+        top: 80px;
+        left: 0;
+        width: 100%;
+        background: white;
+        flex-direction: column;
+        gap: 25px;
+        padding: 35px 0;
+        box-shadow: 0 30px 30px -10px rgba(0,0,0,0.1);
+        clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+        transition: clip-path 0.4s ease;
+        z-index: 99;
+      }
+      .nav-links.active {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+      }
+    }
+
+    @media (min-width: 701px) {
+      .nav-links {
+        display: flex !important;
+        clip-path: none !important;
+        position: static !important;
+        background: transparent;
+        box-shadow: none;
+      }
+    }
+
+    /* ===== CONTENEDOR PRINCIPAL ===== */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 6%;
+    }
+
+    /* ===== CARRUSEL ===== */
+    .carousel-section {
+      margin: 30px 0 40px;
+    }
+    .carousel {
+      display: flex;
+      gap: 25px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding: 15px 0 30px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary) #ddd;
+    }
+    .carousel::-webkit-scrollbar { height: 6px; }
+    .carousel::-webkit-scrollbar-track { background: #efebe9; border-radius: 20px; }
+    .carousel::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 20px; }
+
+    .carousel-item {
+      flex: 0 0 85%;
+      max-width: 360px;
+      scroll-snap-align: start;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--white);
+      box-shadow: var(--shadow);
+      border: 1px solid #f0e6e0;
+    }
+    @media (min-width: 640px) { .carousel-item { flex-basis: 45%; } }
+    @media (min-width: 1024px) { .carousel-item { flex-basis: 28%; } }
+
+    .carousel-img {
+      width: 100%;
+      height: 210px;
+      object-fit: cover;
+    }
+    .carousel-caption {
+      padding: 18px 22px 22px;
+    }
+    .carousel-caption h3 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    .carousel-precio {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* ===== SECCIONES DEL MENÚ ===== */
+    .section-title {
+      font-size: 2.3rem;
+      font-weight: 600;
+      margin: 50px 0 30px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .section-title i { color: var(--primary); }
+
+    .category-title {
+      font-size: 1.8rem;
+      font-weight: 500;
+      margin: 40px 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .category-title i { color: var(--verde); }
+
+    /* GRID DE TARJETAS */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 30px;
+    }
+
+    .menu-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: 0.25s;
+      border: 1px solid #f0eae4;
+      display: flex;
+      flex-direction: column;
+    }
+    .menu-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--primary);
+    }
+    .menu-card .card-img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+    .card-content {
+      padding: 20px 22px 24px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .card-content h4 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .card-desc {
+      color: #5f5a55;
+      font-weight: 300;
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+      flex: 1;
+    }
+    .card-footer-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-precio {
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .add-btn {
+      background: var(--dark);
+      color: white;
+      border: none;
+      width: 50px;
+      height: 50px;
+      border-radius: 60px;
+      font-size: 1.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 5px 12px rgba(0,0,0,0.1);
+    }
+    .add-btn:hover {
+      background: var(--primary);
+      transform: scale(1.05);
+    }
+
+    /* ===== RESPONSIVE TARJETAS: móvil horizontal ===== */
+    @media (max-width: 650px) {
+      .menu-grid {
+        grid-template-columns: 1fr;
+      }
+      .menu-card {
+        flex-direction: row;
+        align-items: stretch;
+      }
+      .menu-card .card-img {
+        width: 130px;
+        height: 140px;
+        border-radius: var(--radius) 0 0 var(--radius);
+      }
+      .card-content {
+        padding: 15px 15px 15px 12px;
+      }
+      .card-content h4 { font-size: 1.2rem; }
+      .card-precio { font-size: 1.5rem; }
+    }
+
+    /* ===== PIE DE CARRITO FLOTANTE (PEDIR) ===== */
+    .cart-footer {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(120px);
+      width: calc(100% - 40px);
+      max-width: 750px;
+      background: #1f2a2f;
+      backdrop-filter: blur(16px);
+      padding: 18px 30px;
+      border-radius: 80px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+      box-shadow: 0 30px 40px rgba(0,0,0,0.5);
+      z-index: 200;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .cart-footer.visible {
+      transform: translateX(-50%) translateY(0);
+    }
+    .cart-info {
+      display: flex;
+      gap: 28px;
+      font-size: 1.1rem;
+      align-items: baseline;
+    }
+    .cart-info strong {
+      font-size: 1.6rem;
+      color: var(--primary);
+    }
+    .pedir-btn {
+      background: var(--primary);
+      border: none;
+      color: white;
+      padding: 14px 40px;
+      border-radius: 60px;
+      font-weight: 700;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 10px 20px rgba(247,92,47,0.4);
+    }
+    .pedir-btn:hover {
+      background: var(--primary-dark);
+      gap: 20px;
+    }
+
+    /* ===== PÁGINA "SOBRE NOSOTROS" (oculta por defecto) ===== */
+    .about-page {
+      display: none;
+      padding: 40px 6% 60px;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+    .about-page.active-page {
+      display: block;
+    }
+    .home-page {
+      display: block;
+    }
+    .home-page.hidden {
+      display: none;
+    }
+
+    .about-hero {
+      background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=1400&auto=format');
+      background-size: cover;
+      background-position: center 35%;
+      height: 350px;
+      border-radius: 50px;
+      display: flex;
+      align-items: flex-end;
+      padding: 50px;
+      margin-bottom: 60px;
+      color: white;
+    }
+    .about-hero h1 {
+      font-size: 4rem;
+      font-weight: 700;
+    }
+
+    .about-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 60px;
+      margin: 50px 0;
+    }
+    .about-text-block {
+      flex: 2 1 400px;
+    }
+    .about-text-block h2 {
+      font-size: 2.5rem;
+      font-weight: 600;
+      margin-bottom: 30px;
+    }
+    .about-text-block p {
+      font-size: 1.2rem;
+      color: #3d3d3d;
+      font-weight: 300;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+    .about-features {
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+      margin: 40px 0;
+    }
+    .feature {
+      background: var(--white);
+      padding: 25px;
+      border-radius: 32px;
+      flex: 1 1 180px;
+      box-shadow: var(--shadow);
+    }
+    .feature i {
+      font-size: 2.2rem;
+      color: var(--primary);
+      margin-bottom: 15px;
+    }
+    .contact-about {
+      background: var(--white);
+      padding: 40px;
+      border-radius: 48px;
+      margin-top: 40px;
+    }
+    .back-home {
+      display: inline-block;
+      margin: 40px 0;
+      background: var(--primary);
+      color: white;
+      padding: 16px 36px;
+      border-radius: 60px;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px 0 80px;
+      color: #8b8078;
+    }
+  </style>
+</head>
+<body>
+  <!-- HEADER FIJO (con logo y navegación) -->
+  <header class="header">
+    <div class="logo-wrap">
+      <img src="https://images.unsplash.com/photo-1615887023676-5922c91f8663?w=100&auto=format&fit=crop" alt="TITA" class="logo-img">
+      <div class="logo-text">T.I.T.A<span>.</span></div>
+      <div class="logo-tagline">catering tico</div>
+    </div>
+
+    <div class="menu-toggle" id="menuToggle">
+      <span></span><span></span><span></span>
+    </div>
+
+    <nav class="nav-links" id="navLinks">
+      <a href="#" id="linkHome" class="active">Menú</a>
+      <a href="#" id="linkAbout">Sobre nosotros</a>
+      <a href="#" class="cart-icon" id="cartIconHeader">
+        <i class="fas fa-bag-shopping"></i>
+        <span class="cart-count" id="cartCountHeader">0</span>
+      </a>
+    </nav>
+  </header>
+
+  <!-- PÁGINA DE INICIO (HOME) -->
+  <div id="homePage" class="home-page">
+    <!-- CARRUSEL -->
+    <div class="carousel-section container">
+      <div class="carousel">
+        <div class="carousel-item">
+          <img class="carousel-img" src="https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=500&auto=format" alt="Casado">
+          <div class="carousel-caption">
+            <h3>Casado del día</h3>
+            <p>Carne, arroz, frijoles, maduro, ensalada</p>
+            <span class="carousel-precio">₡5,900</span>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <img class="carousel-img" src="https://images.unsplash.com/photo-1633434925566-2786b8163d7d?w=500&auto=format" alt="Chifrijo">
+          <div class="carousel-caption">
+            <h3>Chifrijo</h3>
+            <p>Chicharrón, frijoles, pico de gallo, arroz</p>
+            <span class="carousel-precio">₡4,500</span>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <img class="carousel-img" src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=500&auto=format" alt="Ceviche">
+          <div class="carousel-caption">
+            <h3>Ceviche de corvina</h3>
+            <p>Pescado fresco, culantro, limón, chile</p>
+            <span class="carousel-precio">₡5,200</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <main class="container">
+      <!-- ENTRADAS -->
+      <h2 class="section-title"><i class="fas fa-leaf"></i> Nuestra cocina</h2>
+      <section>
+        <h3 class="category-title"><i class="fas fa-seedling"></i> Entradas ticas</h3>
+        <div class="menu-grid" id="entradasGrid">
+          <div class="menu-card" data-nombre="Patacones con queso" data-precio="2800">
+            <img class="card-img" src="https://images.unsplash.com/photo-1598866592490-7dd5cc35b198?w=400&auto=format" alt="Patacones">
+            <div class="card-content">
+              <h4>Patacones con queso</h4>
+              <p class="card-desc">Plátanos verdes fritos, queso fresco y frijol mantequilla.</p>
+              <div class="card-footer-row">
+                <span class="card-precio">₡2,800</span>
+                <button class="add-btn" onclick="window.agregarAlCarrito(this, 'Patacones con queso', 2800)"><i class="fas fa-plus"></i></button>
+              </div>
+            </div>
+          </div>
+          <div class="menu-card" data-nombre="Tamal de cerdo" data-precio="3500">
+            <img class="card-img" src="https://images.unsplash.com/photo-1543353071-873f17a7a088?w=400&auto=format" alt="Tamal">
+            <div class="card-content">
+              <h4>Tamal de cerdo</h4>
+              <p class="card-desc">Masa con cerdo, arroz, garbanzos, pasas, hoja de plátano.</p>
+              <div class="card-footer-row">
+                <span class="card-precio">₡3,500</span>
+                <button class="add-btn" onclick="agregarAlCarrito(this, 'Tamal de cerdo', 3500)"><i class="fas fa-plus"></i></button>
+              </div>
+            </div>
+          </div>
+          <div class="menu-card" data-nombre="Gallo pinto" data-precio="2200">
+            <img class="card-img" src="https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=400&auto=format" alt="Gallo pinto">
+            <div class="card-content">
+              <h4>Gallo pinto campesino</h4>
+              <p class="card-desc">Arroz, frijoles negros, cebolla, chile, culantro.</p>
+              <div class="card-footer-row">
+                <span class="card-precio">₡2,200</span>
+                <button class="add-btn" onclick="agregarAlCarrito(this, 'Gallo pinto', 2200)"><i class="fas fa-plus"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PLATOS FUERTES -->
+      <section>
+        <h3 class="category-title"><i class="fas fa-utensils"></i> Platos fuertes</h3>
+        <div class="menu-grid">
+          <div class="menu-card" data-nombre="Casado de pescado" data-precio="5800">
+            <img class="card-img" src="https://images.unsplash.com/photo-1599978174647-aa66b05e4ee5?w=400&auto=format" alt="Casado pescado">
+            <div class="card-content">
+              <h4>Casado de pescado</h4>
+              <p class="card-desc">Corvina, arroz, frijoles, maduro, ensalada, tortillas.</p>
+              <div class="card-footer-row">
+                <span class="card-precio">₡5,800</span>
+                <button class="add-btn" onclick="agregarAlCarrito(this, 'Casado de pescado', 5800)"><i class="fas fa-plus"></i></button>
+              </div>
+            </div>
+          </div>
+          <div class="menu-card" data-nombre="Olla de carne" data-precio="6200">
+            <img class="card-img" src="https://images.unsplash.com/photo-1547592166-23ac45744ac1?w=400&auto=format" alt="Olla de carne">
+            <div class="card-content">
+              <h4>Olla de carne</h4>
+              <p class="card-desc">Sopa de res con elote, ayote, papa, yuca, chayote.</p>
+              <div class="card-footer-row">
+                <span class="card-precio">₡6,200</span>
+                <button class="add-btn" onclick="agregarAlCarrito(this, 'Olla de carne', 6200)"><i class="fas fa-plus"></i></button>
+              </div>
+            </div>
+          </div>
+          <div class="menu-card" data-nombre="Arroz con pollo" data-precio="4900">
+            <img class="card-img" src="https://images.unsplash.com/photo-1633945274405-b6c8069047b0?w=400&auto=format" alt="Arroz con pollo">
+            <div class="card-content">
+              <h4>Arroz con pollo</h4>
+              <p class="card-desc">Arroz con pollo deshilachado, vegetales y frijoles.</p>
+              <div class="card-footer-row">
+                <span class="card-precio">₡4,900</span>
+                <button class="add-btn" onclick="agregarAlCarrito(this, 'Arroz con pollo', 4900)"><i class="fas fa-plus"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- BEBIDAS -->
+      <section>
+        <h3 class="category-title"><i class="fas fa-mug-hot"></i> Bebidas tradicionales</h3>
+        <div class="menu-grid">
+          <div class="menu-card" data-nombre="Fresco de cas" data-precio="1800">
+            <img class="card-img" src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400&auto=format" alt="Fresco de cas">
+            <div class="card-content">
+              <h4>Fresco de cas</h4>
+              <p class="card-desc">Fruta de cas natural, agua/leche, endulzado.</p>
+              <div class="card-footer-row">
+                <span class="card-precio">₡1,800</span>
+                <button class="add-btn" onclick="agregarAlCarrito(this, 'Fresco de cas', 1800)"><i class="fas fa-plus"></i></button>
+              </div>
+            </div>
+          </div>
+          <div class="menu-card" data-nombre="Horchata de arroz" data-precio="1700">
+            <img class="card-img" src="https://images.unsplash.com/photo-1544145945-f904253b9367?w=400&auto=format" alt="Horchata">
+            <div class="card-content">
+              <h4>Horchata de arroz</h4>
+              <p class="card-desc">Arroz, canela, leche, servida fría.</p>
+              <div class="card-footer-row">
+                <span class="card-precio">₡1,700</span>
+                <button class="add-btn" onclick="agregarAlCarrito(this, 'Horchata de arroz', 1700)"><i class="fas fa-plus"></i></button>
+              </div>
+            </div>
+          </div>
+          <div class="menu-card" data-nombre="Café chorreado" data-precio="1500">
+            <img class="card-img" src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&auto=format" alt="Café">
+            <div class="card-content">
+              <h4>Café chorreado</h4>
+              <p class="card-desc">Café de altura preparado en bolsita.</p>
+              <div class="card-footer-row">
+                <span class="card-precio">₡1,500</span>
+                <button class="add-btn" onclick="agregarAlCarrito(this, 'Café chorreado', 1500)"><i class="fas fa-plus"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div> <!-- fin home -->
+
+  <!-- PÁGINA SOBRE NOSOTROS (separada) -->
+  <div id="aboutPage" class="about-page">
+    <div class="about-hero">
+      <h1>Sabor que <br>hereda tradición</h1>
+    </div>
+    <div style="max-width:1300px; margin:0 auto; padding:0 6%;">
+      <div class="about-grid">
+        <div class="about-text-block">
+          <h2>Quiénes somos</h2>
+          <p><strong>T.I.T.A Sabor & Estilo</strong> nació en una cocina de San José hace más de 15 años. Somos un catering costarricense que rescata recetas de la abuela, ingredientes locales y ese cariño que solo la comida casera tiene. Trabajamos con productores de la zona para llevar a tu mesa lo más fresco.</p>
+          <p>Nos apasiona darle sabor a tus eventos: bodas, cumpleaños, reuniones familiares. Nuestro lema es "pura vida en cada bocado".</p>
+          <div class="about-features">
+            <div class="feature"><i class="fas fa-seedling"></i><h4>Fresco</h4><p>Mercado local</p></div>
+            <div class="feature"><i class="fas fa-fire"></i><h4>Casero</h4><p>Recetas tradicionales</p></div>
+            <div class="feature"><i class="fas fa-heart"></i><h4>Con amor</h4><p>Cocina artesanal</p></div>
+          </div>
+        </div>
+        <div style="flex:1 1 280px;">
+          <img src="https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?w=600&auto=format" style="width:100%; border-radius:48px;" alt="familia">
+        </div>
+      </div>
+      
+      <div class="contact-about" id="contacto">
+        <h2 style="font-size:2rem; margin-bottom:20px;"><i class="fas fa-phone-alt" style="color:var(--primary);"></i> Contacto y ubicación</h2>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:25px;">
+          <div><i class="fas fa-map-pin" style="color:var(--primary);"></i> Barrio Escalante, San José, Costa Rica</div>
+          <div><i class="fas fa-phone"></i> +506 8452 3300 (WhatsApp)</div>
+          <div><i class="fas fa-clock"></i> Martes a domingo 11am - 9pm</div>
+          <div><i class="fas fa-envelope"></i> hola@tita.cr</div>
+        </div>
+      </div>
+      <a href="#" id="backToHomeBtn" class="back-home"><i class="fas fa-arrow-left"></i> Volver al menú</a>
+    </div>
+  </div>
+
+  <!-- CARRITO FLOTANTE (PEDIR POR WHATSAPP) -->
+  <div class="cart-footer hidden" id="cartFooter">
+    <div class="cart-info">
+      <span id="cartItemsSpan">0 productos</span>
+      <strong id="cartTotalSpan">₡0</strong>
+    </div>
+    <button class="pedir-btn" id="pedirWhatsAppBtn"><i class="fab fa-whatsapp"></i> Pedir ahora</button>
+  </div>
+
+  <footer>
+    <p>T.I.T.A · Sabor costarricense · catering con alma tica · 2025</p>
+  </footer>
+
+  <script>
+    // VARIABLES GLOBALES
+    let carrito = [];
+
+    // Elementos
+    const cartFooter = document.getElementById('cartFooter');
+    const cartCountHeader = document.getElementById('cartCountHeader');
+    const cartItemsSpan = document.getElementById('cartItemsSpan');
+    const cartTotalSpan = document.getElementById('cartTotalSpan');
+    const homePage = document.getElementById('homePage');
+    const aboutPage = document.getElementById('aboutPage');
+    const linkHome = document.getElementById('linkHome');
+    const linkAbout = document.getElementById('linkAbout');
+    const backToHomeBtn = document.getElementById('backToHomeBtn');
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinks = document.getElementById('navLinks');
+
+    // ---------- FUNCIONES DEL CARRITO ----------
+    window.agregarAlCarrito = function(boton, nombre, precio) {
+      carrito.push({ nombre, precio });
+      
+      // feedback botón
+      boton.style.background = '#2b7a4b';
+      boton.innerHTML = '<i class="fas fa-check"></i>';
+      setTimeout(() => {
+        boton.style.background = '#1f2a2f';
+        boton.innerHTML = '<i class="fas fa-plus"></i>';
+      }, 400);
+
+      actualizarCarritoUI();
+    };
+
+    function actualizarCarritoUI() {
+      const totalProductos = carrito.length;
+      cartCountHeader.innerText = totalProductos;
+      cartItemsSpan.innerText = totalProductos + (totalProductos === 1 ? ' producto' : ' productos');
+      const total = carrito.reduce((acc, item) => acc + item.precio, 0);
+      cartTotalSpan.innerText = '₡' + total.toLocaleString('es-CR');
+      
+      if (carrito.length > 0) {
+        cartFooter.classList.add('visible');
+      } else {
+        cartFooter.classList.remove('visible');
+      }
+    }
+
+    // BOTÓN PEDIR WHATSAPP
+    document.getElementById('pedirWhatsAppBtn').addEventListener('click', function() {
+      if (carrito.length === 0) return;
+      const telefono = '50684523300';
+      let mensaje = '¡Hola T.I.T.A! Quiero pedir para catering:%0A%0A';
+      carrito.forEach(item => {
+        mensaje += `📍 ${item.nombre} - ₡${item.precio.toLocaleString('es-CR')}%0A`;
+      });
+      const total = carrito.reduce((acc, i) => acc + i.precio, 0);
+      mensaje += `%0A*Total: ₡${total.toLocaleString('es-CR')}*%0A%0A_Enviado desde el menú digital_`;
+      window.open(`https://wa.me/${telefono}?text=${mensaje}`, '_blank');
+    });
+
+    // Navegación entre páginas
+    function mostrarHome() {
+      homePage.classList.remove('hidden');
+      homePage.style.display = 'block';
+      aboutPage.classList.remove('active-page');
+      aboutPage.style.display = 'none';
+      linkHome.classList.add('active');
+      linkAbout.classList.remove('active');
+    }
+    function mostrarAbout() {
+      homePage.classList.add('hidden');
+      homePage.style.display = 'none';
+      aboutPage.classList.add('active-page');
+      aboutPage.style.display = 'block';
+      linkAbout.classList.add('active');
+      linkHome.classList.remove('active');
+    }
+
+    linkHome.addEventListener('click', (e) => { e.preventDefault(); mostrarHome(); });
+    linkAbout.addEventListener('click', (e) => { e.preventDefault(); mostrarAbout(); });
+    backToHomeBtn.addEventListener('click', (e) => { e.preventDefault(); mostrarHome(); });
+
+    // menú hamburguesa
+    menuToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+    });
+
+    // carrito header: scroll al footer
+    document.getElementById('cartIconHeader').addEventListener('click', (e) => {
+      e.preventDefault();
+      cartFooter.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // estado inicial
+    mostrarHome();
+  </script>
+</body>
+</html>
