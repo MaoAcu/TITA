@@ -27,7 +27,14 @@
       line-height: 1.5;
       overflow-x: hidden;
     }
+    .mobile-cart {
+  display: none;
+}
 
+.desktop-cart {
+  display: flex;
+  align-items: center;
+}
     /* ===== HEADER FIJO CON LOGO ===== */
     .header {
       position: sticky;
@@ -740,6 +747,39 @@
     padding: 8px 16px;
     font-size: 0.9rem;
     flex: 0 1 auto; /* Permite que los chips se ajusten */
+  }
+   .mobile-cart {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+  }
+  
+  .desktop-cart {
+    display: none;
+  }
+  
+  /* Ajustamos el header para móvil */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .logo-wrap {
+    flex: 1;
+  }
+  
+  .menu-toggle {
+    order: 3;
+  }
+  
+  .mobile-cart {
+    order: 2;
+  }
+  
+  /* El nav sigue oculto hasta que se active */
+  .nav-links {
+    order: 4;
   }
 }
 

@@ -13,27 +13,33 @@
   <link rel="stylesheet" href="css/syile.css">
 </head>
 <body>
-  <!-- HEADER -->
-  <header class="header">
-    <div class="logo-wrap">
-      <img src="images/LogoT.I.T.A.jpeg" alt="TITA" class="logo-img">
-      <div class="logo-text">T.I.T.A<span>.</span></div>
-      <div class="logo-tagline">Sabor & Estilo</div>
-    </div>
-
-    <div class="menu-toggle" id="menuToggle">
-      <span></span><span></span><span></span>
-    </div>
-
-    <nav class="nav-links" id="navLinks">
-      <a href="#" id="linkHome" class="active">Menú</a>
-      <a href="#" id="linkAbout">Sobre nosotros</a>
-      <a href="#" class="cart-icon" id="cartIconHeader">
-        <i class="fas fa-bag-shopping"></i>
-        <span class="cart-count" id="cartCountHeader">0</span>
-      </a>
-    </nav>
-  </header>
+<!-- HEADER -->
+<header class="header">
+  <div class="logo-wrap">
+    <img src="images/LogoT.I.T.A.jpeg" alt="TITA" class="logo-img">
+    <div class="logo-text">T.I.T.A<span>.</span></div>
+    <div class="logo-tagline">Sabor & Estilo</div>
+  </div>
+   
+  <a href="#" class="cart-icon mobile-cart" id="cartIconHeaderMobile">
+    <i class="fas fa-bag-shopping"></i>
+    <span class="cart-count" id="cartCountHeaderMobile">0</span>
+  </a>
+  
+  <div class="menu-toggle" id="menuToggle">
+    <span></span><span></span><span></span>
+  </div>
+  
+  <nav class="nav-links" id="navLinks">
+    <a href="#" id="linkHome" class="active">Menú</a>
+    <a href="#" id="linkAbout">Sobre nosotros</a>
+    <!-- Carrito visible en PC (dentro del nav) -->
+    <a href="#" class="cart-icon desktop-cart" id="cartIconHeaderDesktop">
+      <i class="fas fa-bag-shopping"></i>
+      <span class="cart-count" id="cartCountHeaderDesktop">0</span>
+    </a>
+  </nav>
+</header>
 
   <!-- PÁGINA DE INICIO -->
   <div id="homePage" class="home-page">
