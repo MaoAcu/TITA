@@ -348,10 +348,10 @@
       left: 50%;
       transform: translateX(-50%) translateY(120px);
       width: calc(100% - 40px);
-      max-width: 750px;
+      max-width: 850px;
       background: #1f2a2f;
       backdrop-filter: blur(16px);
-      padding: 18px 30px;
+      padding: 18px 25px;
       border-radius: 80px;
       display: flex;
       justify-content: space-between;
@@ -361,38 +361,96 @@
       z-index: 200;
       transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
       border: 1px solid rgba(255,255,255,0.1);
+      gap: 15px;
+      flex-wrap: wrap;
     }
     .cart-footer.visible {
       transform: translateX(-50%) translateY(0);
     }
     .cart-info {
       display: flex;
-      gap: 28px;
-      font-size: 1.1rem;
-      align-items: baseline;
+      gap: 20px;
+      font-size: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
     }
     .cart-info strong {
-      font-size: 1.6rem;
+      font-size: 1.5rem;
       color: var(--primary);
+    }
+    .cart-items-preview {
+      max-height: 120px;
+      overflow-y: auto;
+      background: rgba(0,0,0,0.3);
+      border-radius: 50px;
+      padding: 10px 20px;
+      min-width: 240px;
+    }
+    .cart-item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      font-size: 0.9rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 6px 0;
+    }
+    .cart-item-row:last-child {
+      border-bottom: none;
+    }
+    .item-name {
+      max-width: 160px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .item-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .item-controls button {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: white;
+      width: 26px;
+      height: 26px;
+      border-radius: 30px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .item-controls button:hover {
+      background: var(--primary);
+    }
+    .remove-item {
+      background: rgba(255,80,80,0.3) !important;
+    }
+    .remove-item:hover {
+      background: #ff4d4d !important;
     }
     .pedir-btn {
       background: var(--primary);
       border: none;
       color: white;
-      padding: 14px 40px;
+      padding: 14px 35px;
       border-radius: 60px;
       font-weight: 700;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       display: flex;
       align-items: center;
-      gap: 15px;
+      gap: 12px;
       cursor: pointer;
       transition: 0.2s;
       box-shadow: 0 10px 20px rgba(247,92,47,0.4);
+      white-space: nowrap;
     }
     .pedir-btn:hover {
       background: var(--primary-dark);
-      gap: 20px;
+      gap: 18px;
     }
 
     /* ===== PÁGINA "SOBRE NOSOTROS" (oculta por defecto) ===== */
@@ -496,7 +554,7 @@
   <!-- HEADER FIJO (con logo y navegación) -->
   <header class="header">
     <div class="logo-wrap">
-      <img src="https://images.unsplash.com/photo-1615887023676-5922c91f8663?w=100&auto=format&fit=crop" alt="TITA" class="logo-img">
+      <img src="LogoT.I.T.A.jpeg" alt="TITA" class="logo-img">
       <div class="logo-text">T.I.T.A<span>.</span></div>
       <div class="logo-tagline">catering tico</div>
     </div>
@@ -706,13 +764,18 @@
     </div>
   </div>
 
-  <!-- CARRITO FLOTANTE (PEDIR POR WHATSAPP) -->
+  <!-- CARRITO FLOTANTE CON OPCIONES PARA QUITAR PRODUCTOS -->
   <div class="cart-footer hidden" id="cartFooter">
     <div class="cart-info">
-      <span id="cartItemsSpan">0 productos</span>
-      <strong id="cartTotalSpan">₡0</strong>
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <span id="cartItemsSpan">0 productos</span>
+        <strong id="cartTotalSpan">₡0</strong>
+      </div>
+      <div class="cart-items-preview" id="cartItemsPreview">
+        <!-- Aquí se renderizarán los items del carrito con botones para quitar -->
+      </div>
     </div>
-    <button class="pedir-btn" id="pedirWhatsAppBtn"><i class="fab fa-whatsapp"></i> Pedir ahora</button>
+    <button class="pedir-btn" id="pedirWhatsAppBtn"><i class="fab fa-whatsapp"></i> Pedir</button>
   </div>
 
   <footer>
@@ -721,13 +784,14 @@
 
   <script>
     // VARIABLES GLOBALES
-    let carrito = [];
+    let carrito = []; // cada objeto: { nombre, precio, id: timestamp o índice }
 
     // Elementos
     const cartFooter = document.getElementById('cartFooter');
     const cartCountHeader = document.getElementById('cartCountHeader');
     const cartItemsSpan = document.getElementById('cartItemsSpan');
     const cartTotalSpan = document.getElementById('cartTotalSpan');
+    const cartItemsPreview = document.getElementById('cartItemsPreview');
     const homePage = document.getElementById('homePage');
     const aboutPage = document.getElementById('aboutPage');
     const linkHome = document.getElementById('linkHome');
@@ -736,11 +800,13 @@
     const menuToggle = document.getElementById('menuToggle');
     const navLinks = document.getElementById('navLinks');
 
-    // ---------- FUNCIONES DEL CARRITO ----------
+    // ---------- FUNCIONES DEL CARRITO (CON QUITAR) ----------
     window.agregarAlCarrito = function(boton, nombre, precio) {
-      carrito.push({ nombre, precio });
+      // Agregar con un identificador único (timestamp + random)
+      const id = Date.now() + Math.random();
+      carrito.push({ id, nombre, precio });
       
-      // feedback botón
+      // feedback visual
       boton.style.background = '#2b7a4b';
       boton.innerHTML = '<i class="fas fa-check"></i>';
       setTimeout(() => {
@@ -751,6 +817,36 @@
       actualizarCarritoUI();
     };
 
+    // Función para quitar un producto específico por su id
+    window.quitarDelCarrito = function(id) {
+      carrito = carrito.filter(item => item.id !== id);
+      actualizarCarritoUI();
+    };
+
+    // Función para renderizar la lista del carrito con botones
+    function renderizarItemsCarrito() {
+      if (!cartItemsPreview) return;
+      
+      if (carrito.length === 0) {
+        cartItemsPreview.innerHTML = '<div style="padding:5px; color:#aaa;">Carrito vacío</div>';
+        return;
+      }
+
+      let html = '';
+      carrito.forEach(item => {
+        html += `
+          <div class="cart-item-row">
+            <span class="item-name" title="${item.nombre}">${item.nombre}</span>
+            <span>₡${item.precio.toLocaleString('es-CR')}</span>
+            <div class="item-controls">
+              <button class="remove-item" onclick="quitarDelCarrito(${item.id})" title="Quitar">✕</button>
+            </div>
+          </div>
+        `;
+      });
+      cartItemsPreview.innerHTML = html;
+    }
+
     function actualizarCarritoUI() {
       const totalProductos = carrito.length;
       cartCountHeader.innerText = totalProductos;
@@ -758,6 +854,9 @@
       const total = carrito.reduce((acc, item) => acc + item.precio, 0);
       cartTotalSpan.innerText = '₡' + total.toLocaleString('es-CR');
       
+      // Renderizar items con botones
+      renderizarItemsCarrito();
+
       if (carrito.length > 0) {
         cartFooter.classList.add('visible');
       } else {
@@ -813,6 +912,7 @@
 
     // estado inicial
     mostrarHome();
+    actualizarCarritoUI(); // por si acaso
   </script>
 </body>
 </html>
