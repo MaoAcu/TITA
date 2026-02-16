@@ -116,7 +116,7 @@ function renderizarMenu(productosAMostrar) {
     agrupados[p.categoria].push(p);
   });
 
-  const nombresCategoria = { 'entradas': 'Entradas ticas', 'fuertes': 'Platos fuertes', 'bebidas': 'Bebidas tradicionales' };
+  const nombresCategoria = { 'entradas': 'Entradas', 'fuertes': 'Platos fuertes', 'bebidas': 'Bebidas tradicionales' };
   const iconosCategoria = { 'entradas': 'fa-seedling', 'fuertes': 'fa-utensils', 'bebidas': 'fa-mug-hot' };
 
   let html = '';
