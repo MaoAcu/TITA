@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | T.I.T.A. Catering</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/Loginstyle.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="login-card">
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='images/LogoT.I.T.A.webp') }}" alt="T.I.T.A. Logo" class="main-logo">
+        </div>
+        
+        <header>
+            <h1>Bienvenido</h1>
+            <p>Sabor & Estilo en cada detalle</p>
+        </header>
+
+          <form method="post" action="{{ url_for('auth.login') }}">
+                <div class="form-group">
+                    <label class="form-label" for="usuario">
+                        Usuario 
+                        <div class="user-icon">👤</div>
+                    </label>
+                    <input type="email" class="form-input" name="usuario" id="usuario" placeholder="correo@ejemplo.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">
+                        Contraseña 
+                        <div class="password-icon">🔒</div>
+                    </label>
+                    <input type="password" class="form-input" name="password" id="password" placeholder="••••••••" required>
+                    <i id="togglePassword" class="fa-solid fa-eye"></i>
+                </div>
+
+                <div class="forgot-password">
+                    <a href="{{ url_for('routes.recuperar_Contra') }}">¿Olvidaste tus credenciales?</a>
+                </div>
+
+                <button type="submit" class="login-btn">
+                    <span>Iniciar sesión</span>
+                    <span class="arrow">↪</span>
+                </button>
+            </form>
+    </div>
+    <script src="{{ url_for('static', filename='js/LoginScript.js') }}" > </script>
+   
+</body>
+</html>

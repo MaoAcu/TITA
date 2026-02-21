@@ -16,14 +16,25 @@ let categorias = [
     { id: 4, nombre: 'Promociones', icono: 'fa-tags', slug: 'promos' }
 ];
 
-let productos = [
-    { id: 1, nombre: 'Plátano con queso', descripcion: 'Delicioso plátano maduro con queso', precio: 2800, categoria: 'entradas', imagen: 'images/platano_conqueso.jpg', status: 'active' },
-    { id: 2, nombre: 'Tamal de cerdo', descripcion: 'Masa con cerdo y verduras', precio: 3500, categoria: 'entradas', imagen: 'https://i.ytimg.com/vi/e5D5j4_T-H4/maxresdefault.jpg', status: 'active' },
-    { id: 3, nombre: 'Rice and beans', descripcion: 'Rice and Beans, pollo caribeño, maduro y ensalada', precio: 5800, categoria: 'fuertes', imagen: 'images/riceandbeans.png', status: 'active' },
-    { id: 4, nombre: 'Olla de carne', descripcion: 'Sopa de res con verduras', precio: 6200, categoria: 'fuertes', imagen: 'https://www.recetascostarica.com/base/stock/Recipe/olla-de-carne/olla-de-carne_web.jpg', status: 'active' },
-    { id: 5, nombre: 'Fresco de cas', descripcion: 'Refresco natural de cas', precio: 1800, categoria: 'bebidas', imagen: 'https://riverside.cr/wp-content/uploads/Cas2.jpeg', status: 'active' }
-];
+let productos = [];
+async function cargarMenu() {
+    try {
+        const response = await fetch('/menu/getmenu');  
 
+        if (!response.ok) {
+            throw new Error('Error al obtener el menú');
+        }
+
+        productos = await response.json(); 
+        
+        return productos;  
+
+    } catch (error) {
+        console.error('Error cargando menú:', error);
+        productos = [];  
+        return [];
+    }
+}
 // ===== VARIABLES GLOBALES =====
 let currentSection = 'categorias';
 let editingItem = null;
@@ -247,7 +258,7 @@ function createItemCard(item) {
     return `
         <div class="item-card">
             <div class="item-image">
-                <img src="${item.imagen}" alt="${item.nombre}" onerror="this.src='images/LogoT.I.T.A.jpeg'">
+                <img src="${item.imagen}" alt="${item.nombre}" onerror="this.src='${URL_IMG}'">
             </div>
             <div class="item-info">
                 <div class="item-header">
@@ -428,9 +439,13 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(style);
 
     // Renderizar
-    renderCategorias();
+    
     loadConfigData();
-
+    cargarMenu().then(() => {
+        // Esto se ejecuta DESPUÉS de que los datos se carguen
+        renderCategorias();
+        switchSection('categorias');
+    });
     // Elementos del DOM
     const menuToggle = document.getElementById('menuToggle');
     const overlay = document.querySelector('.sidebar-overlay');
@@ -500,3 +515,4 @@ window.confirmDeleteCategoria = confirmDeleteCategoria;
 window.confirmDeleteItem = confirmDeleteItem;
 window.switchSection = switchSection;
 window.setupDeleteButton = setupDeleteButton;
+ 

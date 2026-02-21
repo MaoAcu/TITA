@@ -3,21 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>T.I.T.A · Catering Service</title>
+
+  <meta name="theme-color" content="#2c3e50">
+  <meta property="og:title" content="T.I.T.A">
+  <meta property="og:description" content="Lo mejor de la comida casera">
+  <meta property="og:image" content="	{{ url_for('static', filename='images/LogoT.I.T.A.webp') }}">
+  <meta property="og:type" content="website">
   <!-- Fuente moderna Inter -->
+  <title>T.I.T.A · Catering Service</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet">
   <!-- Font Awesome -->
  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-  <link rel="stylesheet" href="css/syile.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/syile.css') }}">
+ 
 </head>
 <body>
 <!-- HEADER -->
 <header class="header">
   <div class="logo-wrap">
-    <img src="images/LogoT.I.T.A.jpeg" alt="TITA" class="logo-img">
+    <img src="{{ url_for('static', filename='images/LogoT.I.T.A.webp') }}" alt="TITA" class="logo-img">
     <div class="logo-text">T.I.T.A<span>.</span></div>
     <div class="logo-tagline">Sabor & Estilo</div>
   </div>
@@ -34,7 +40,7 @@
   <nav class="nav-links" id="navLinks">
     <a href="#" id="linkHome" class="active">Menú</a>
     <a href="#" id="linkAbout">Sobre nosotros</a>
-    <!-- Carrito visible en PC (dentro del nav) -->
+     
     <a href="#" class="cart-icon desktop-cart" id="cartIconHeaderDesktop">
       <i class="fas fa-bag-shopping"></i>
       <span class="cart-count" id="cartCountHeaderDesktop">0</span>
@@ -148,6 +154,9 @@
     <p>T.I.T.A · Sabor & Estilo  · 2026</p>
   </footer>
 
-  <script src="js/script.js"></script>
+   <script>
+    const URL_IMG="{{ url_for('static', filename='images/LogoT.I.T.A.jpeg') }}"
+   </script>
+  <script src="{{ url_for('static', filename='js/script.js') }}" > </script>
 </body>
 </html>

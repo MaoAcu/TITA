@@ -1,0 +1,108 @@
+:root {
+    --gold: #B5945D;
+    --dark-gold: #8e7345;
+}
+
+body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f9f9f9;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.login-card {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    width: 100%;
+    max-width: 380px;
+    text-align: center;
+    border-top: 5px solid var(--gold);
+}
+
+.logo-container {
+    width: 110px;
+    height: 110px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--gold);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main-logo { width: 100%; height: auto; }
+
+header h1 {
+    font-family: 'Cinzel', serif;
+    color: var(--gold);
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+header p {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 30px;
+    line-height: 1.4;
+}
+
+.input-group { text-align: left; margin-bottom: 25px; }
+
+.form-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
+    text-transform: uppercase;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--gold);
+}
+
+.btn-login {
+    width: 100%;
+    padding: 15px;
+    background: var(--gold);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-family: 'Cinzel', serif;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: 0.3s;
+}
+
+.btn-login:hover { background: var(--dark-gold); }
+
+.back-link {
+    text-decoration: none;
+    color: #999;
+    font-size: 0.8rem;
+    display: inline-block;
+    margin-top: 20px;
+}
+
+.back-link:hover { color: var(--gold); }
+
+.error-message {
+    color: #d9534f;
+    font-size: 0.75rem;
+    margin-top: 5px;
+}

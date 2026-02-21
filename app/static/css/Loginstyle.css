@@ -1,0 +1,176 @@
+:root {
+    --gold: #B5945D;
+    --dark-gold: #8e7345;
+    --light-gray: #f9f9f9;
+    --text-dark: #333;
+    --border-color: #ddd;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f4f4f4;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.login-card {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    width: 100%;
+    max-width: 380px;
+    text-align: center;
+    border-top: 5px solid var(--gold);
+}
+
+/* Logo Circular */
+.logo-container {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    border: 2px solid var(--gold); /* Añadido para resaltar el logo */
+}
+
+.main-logo {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+header h1 {
+    font-family: 'Cinzel', serif;
+    color: var(--gold);
+    margin: 0;
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+}
+
+header p {
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Formulario y Grupos */
+.form-group {
+    text-align: left;
+    margin-bottom: 20px;
+    position: relative;  
+}
+
+.form-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.user-icon, .password-icon {
+    font-size: 0.9rem;
+    opacity: 0.6;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--gold);
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(181, 148, 93, 0.2);
+}
+
+/* Link de Olvidaste credenciales */
+.forgot-password {
+    text-align: right;
+    margin-bottom: 25px;
+}
+
+.forgot-password a {
+    font-size: 0.75rem;
+    color: #999;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.forgot-password a:hover {
+    color: var(--gold);
+}
+
+/* Botón de Login Estilizado */
+.login-btn {
+    width: 100%;
+    padding: 15px;
+    background-color: var(--gold);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-family: 'Cinzel', serif;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 1px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    text-transform: uppercase;
+}
+
+.login-btn .arrow {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+}
+
+.login-btn:hover {
+    background-color: var(--dark-gold);
+}
+
+.login-btn:hover .arrow {
+    transform: translateX(5px); /* Efecto de movimiento en la flecha */
+}
+
+#togglePassword {
+    position: absolute;
+    right: 15px;      /* Distancia desde la derecha */
+    top: 42px;        /* Ajusta este valor según la altura de tu label */
+    cursor: pointer;
+    color: #999;
+    font-size: 1.1rem;
+    transition: color 0.3s;
+    z-index: 10;      /* Asegura que esté por encima del input */
+}
+
+#togglePassword:hover {
+    color: var(--gold);
+}
+
+/* Evita que el texto de la contraseña choque con el ojo */
+#password {
+    padding-right: 45px; 
+}

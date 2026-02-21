@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restablecer Contraseña | T.I.T.A.</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/codigores.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modalRes.css') }}">
+</head>
+<body>
+    
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-icon">✨</div>
+            <h2 id="modalTitle">¡Éxito!</h2>
+            <p id="modalMessage"></p>
+        </div>
+    </div>
+
+    <main class="main-content">
+        <div class="login-card">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='images/LogoT.I.T.A.webp') }}" alt="Logo TITA" class="main-logo">
+            </div>
+
+            <header>
+                <h1>Restablecer</h1>
+                <p>Ingresa el código de seguridad enviado a tu email.</p>
+            </header>
+
+            <div class="form-section active" id="codeSection">
+                
+                <div class="error-message" id="codeError" style="display: none;">
+                    <div class="error-text">❌ Código incorrecto. Verifica e intenta de nuevo.</div>
+                </div>
+
+                <form id="codeForm">
+                    <div class="input-group">
+                        <label for="verificationCode" class="form-label">Código de Verificación</label>
+                        <input 
+                            type="text" 
+                            id="verificationCode" 
+                            name="verificationCode" 
+                            class="code-input"
+                            maxlength="6" 
+                            placeholder="000000"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" class="btn-login">VERIFICAR CÓDIGO</button>
+                </form>
+
+                <div class="footer-links">
+                    ¿No recibiste el código? <br>
+                    <a href="#" class="resend-link" id="resendCode">Reenviar código</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const CODE_URL = "{{ url_for('routes.codigo_restablecer') }}";
+    </script>
+    <script src="{{ url_for('static', filename='js/codeRestablecer.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/modalRes.js') }}"></script>
+</body>
+</html>

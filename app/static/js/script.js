@@ -136,7 +136,7 @@ function renderizarMenu(productosAMostrar) {
     items.forEach(p => {
       html += `
         <div class="menu-card" data-id="${p.id}" onclick="abrirModalImagenPorId(${p.id})">
-          <img class="card-img" src="${p.imagen}" alt="${p.nombre}" onerror="this.src='images/LogoT.I.T.A.jpeg'">
+          <img class="card-img" src="${p.imagen}" alt="${p.nombre}" onerror="this.src='${URL_IMG}'">
           <div class="card-content">
             <h4>${p.nombre}</h4>
             <p class="card-desc">${p.descripcion}</p>

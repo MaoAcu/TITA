@@ -7,7 +7,8 @@
     
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/dashboard.css">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 </head>
 <body>
 
@@ -269,7 +270,9 @@
             </div>
         </div>
     </div>
-
-    <script src="js/dashboard.js"></script>
+    <script>
+        const URL_IMG="{{ url_for('static', filename='images/LogoT.I.T.A.jpeg') }}"
+    </script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}" > </script>
 </body>
 </html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Contraseña | T.I.T.A.</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/recuperarContraStyle.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="login-card"> <div class="logo-container">
+            <img src="{{ url_for('static', filename='images/LogoT.I.T.A.webp') }}" alt="Logo TITA" class="main-logo">
+        </div>
+
+        <header>
+            <h1>Recuperar Acceso</h1>
+            <p>Enviaremos un código a tu correo para restablecer tu contraseña.</p>
+        </header>
+
+        <form id="recoveryForm">
+            <div class="input-group">
+                <label for="usuario" class="form-label">Correo Electrónico</label>
+                <input type="email" 
+                       id="usuario" 
+                       name="usuario" 
+                       class="form-input" 
+                       placeholder="ejemplo@tita.com" 
+                       required>
+                <div class="error-message" id="emailError"></div>
+            </div>
+
+            <button type="button" class="btn-login" id="procesarBtn">
+                CONTINUAR
+            </button>
+        </form>
+
+        <div class="footer-links">
+            <a href="{{ url_for('routes.login') }}" class="back-link">
+                <span class="icon">←</span> Volver al inicio de sesión
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const PREGUNTAS_URL = "{{ url_for('routes.codigo_restablecer') }}";
+    </script>
+    <script src="{{ url_for('static', filename='js/recuperarContrasena.js') }}"></script>
+</body>
+</html>
