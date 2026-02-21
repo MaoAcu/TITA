@@ -27,7 +27,8 @@ def GetMenu():
                 "imagen": m.imagen,
                 "categoria": m.categoria,
                 "estado": m.estado,
-                "subcategoria": m.subcategoria
+                "subcategoria": m.subcategoria,
+                "destacado": m.destacado
             }
             for m in menus
         ]

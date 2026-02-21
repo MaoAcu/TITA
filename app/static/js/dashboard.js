@@ -25,7 +25,19 @@ async function cargarMenu() {
             throw new Error('Error al obtener el menú');
         }
 
-        productos = await response.json(); 
+        const data = await response.json();  // ← Cambiar a data
+        
+        productos = data.map(item => ({       // ← Usar data aquí
+            id: item.idmenu,
+            nombre: item.nombre,
+            descripcion: item.descripcion,
+            precio: Number(item.precio),
+            categoria: item.categoria,
+            imagen: item.imagen ? `${URL_IMG_BASE}${item.imagen}` : URL_IMG_DEFAULT,
+            destacado: Boolean(item.destacado),
+            status: item.estado || 'active'
+        }));
+        
         
         return productos;  
 
@@ -255,10 +267,11 @@ function renderProductos(categoria) {
 }
 
 function createItemCard(item) {
+    
     return `
         <div class="item-card">
             <div class="item-image">
-                <img src="${item.imagen}" alt="${item.nombre}" onerror="this.src='${URL_IMG}'">
+                <img src="${item.imagen}" alt="${item.nombre}" onerror="this.src='${URL_IMG_DEFAULT}'">
             </div>
             <div class="item-info">
                 <div class="item-header">

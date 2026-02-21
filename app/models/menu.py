@@ -1,5 +1,5 @@
 from app.extensions import db
-from sqlalchemy import Column, Integer, String, Numeric, Text, ForeignKey
+from sqlalchemy import Column, Integer, String, Numeric, Text, ForeignKey,Boolean
 
 
 class Menu(db.Model):
@@ -14,3 +14,5 @@ class Menu(db.Model):
     categoria = Column(String(100))
     estado = Column(String(20), default="active")
     subcategoria=Column(String(30),nullable=False)
+    destacado = Column(Boolean, default=False)
+    

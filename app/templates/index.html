@@ -47,8 +47,11 @@
     </a>
   </nav>
 </header>
-
-  <!-- PÁGINA DE INICIO -->
+<div id="loader" class="loader-container">
+    <div class="spinner"></div>
+    <p>Cargando deliciosas opciones...</p>
+</div>
+   
   <div id="homePage" class="home-page">
     <!-- CARRUSEL CON TÍTULO -->
     <div class="carousel-section container">
@@ -155,7 +158,8 @@
   </footer>
 
    <script>
-    const URL_IMG="{{ url_for('static', filename='images/LogoT.I.T.A.jpeg') }}"
+    const URL_IMG_BASE = "{{ url_for('static', filename='images/') }}";
+    const URL_IMG_DEFAULT="{{ url_for('static', filename='images/LogoT.I.T.A.webp') }}"
    </script>
   <script src="{{ url_for('static', filename='js/script.js') }}" > </script>
 </body>
