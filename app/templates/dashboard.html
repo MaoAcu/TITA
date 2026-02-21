@@ -261,7 +261,16 @@
                             <input type="hidden" id="itemStatus" value="active">
                         </div>
                     </div>
-                    
+                    <div class="form-group">
+                        <label>¿Destacado?</label>
+                        <div class="estrellas-container">
+                            <button type="button" class="estrella-simple" id="estrellaSimple" data-destacado="0">
+                                <i class="far fa-star"></i>
+                            </button>
+                            <span id="destacadoText">No destacado</span>
+                            <input type="hidden" id="itemDestacado" value="0">
+                        </div>
+                    </div>
                     <div class="form-actions">
                         <button type="button" class="btn-cancel" onclick="closeItemModal()">Cancelar</button>
                         <button type="submit" class="btn-save">Guardar</button>

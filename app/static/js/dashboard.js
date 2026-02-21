@@ -4,6 +4,7 @@ const nombresCategoria = {
     'entradas': 'Entradas',
     'fuertes': 'Platos fuertes',
     'bebidas': 'Bebidas',
+    'desayunos':'Desayunos',
     'promos': 'Promociones'
 };
  
@@ -13,7 +14,8 @@ let categorias = [
     { id: 1, nombre: 'Entradas', icono: 'fa-bread-slice', slug: 'entradas' },
     { id: 2, nombre: 'Platos fuertes', icono: 'fa-utensils', slug: 'fuertes' },
     { id: 3, nombre: 'Bebidas', icono: 'fa-glass-cheers', slug: 'bebidas' },
-    { id: 4, nombre: 'Promociones', icono: 'fa-tags', slug: 'promos' }
+    {id: 4, nombre: 'Desayunos', icono: 'fa-coffee', slug: 'desayunos' },
+    { id: 5, nombre: 'Promociones', icono: 'fa-tags', slug: 'promos' }
 ];
 
 let productos = [];
@@ -25,9 +27,9 @@ async function cargarMenu() {
             throw new Error('Error al obtener el menú');
         }
 
-        const data = await response.json();  // ← Cambiar a data
+        const data = await response.json();   
         
-        productos = data.map(item => ({       // ← Usar data aquí
+        productos = data.map(item => ({        
             id: item.idmenu,
             nombre: item.nombre,
             descripcion: item.descripcion,
@@ -35,7 +37,7 @@ async function cargarMenu() {
             categoria: item.categoria,
             imagen: item.imagen ? `${URL_IMG_BASE}${item.imagen}` : URL_IMG_DEFAULT,
             destacado: Boolean(item.destacado),
-            status: item.estado || 'active'
+            status: item.estado === '1' ? 'active' : 'inactive'
         }));
         
         
@@ -98,9 +100,9 @@ function closeDeleteModal() {
     deleteCallback = null;
 }
 
-// ===== FUNCIÓN PARA ASIGNAR EVENTOS DEL SIDEBAR =====
+ 
 function asignarEventosSidebar() {
-    // Navegación de categorías (productos)
+    // Navegación de categorías  
     document.querySelectorAll('#categoriasList li').forEach(item => {
         item.addEventListener('click', (e) => {
             const section = e.currentTarget.dataset.section;
@@ -267,11 +269,14 @@ function renderProductos(categoria) {
 }
 
 function createItemCard(item) {
+    const estrellaDestacado = item.destacado ? 
+        '<span class="destacado-badge"><i class="fas fa-star"></i> Destacado</span>' : '';
     
     return `
         <div class="item-card">
             <div class="item-image">
                 <img src="${item.imagen}" alt="${item.nombre}" onerror="this.src='${URL_IMG_DEFAULT}'">
+                ${estrellaDestacado}
             </div>
             <div class="item-info">
                 <div class="item-header">
@@ -309,14 +314,20 @@ function openItemModal(id = null, categoria = null) {
     document.getElementById('itemPrice').value = editingItem?.precio || '';
     document.getElementById('itemImage').value = editingItem?.imagen || '';
     
+    // Aquí status ya es 'active' o 'inactive'
     const status = editingItem?.status || 'active';
     document.getElementById('itemStatus').value = status;
+    
     document.querySelectorAll('.status-btn').forEach(btn => {
         btn.classList.remove('active');
         if (btn.dataset.status === status) {
             btn.classList.add('active');
         }
     });
+    
+    
+    const destacado = editingItem?.destacado ? 1 : 0;
+    actualizarEstrellaSimple(destacado);
     
     document.getElementById('editModal').classList.add('active');
 }
@@ -334,18 +345,37 @@ function saveItem(e) {
     const nombre = document.getElementById('itemName').value;
     const descripcion = document.getElementById('itemDescription').value;
     const precio = parseFloat(document.getElementById('itemPrice').value);
-    const imagen = document.getElementById('itemImage').value || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600';
-    const status = document.getElementById('itemStatus').value;
+    const imagen = document.getElementById('itemImage').value || URL_IMG_DEFAULT;
+    const status = document.getElementById('itemStatus').value; // 'active' o 'inactive'
+    
+    const destacadoInput = document.getElementById('itemDestacado');
+    const destacado = destacadoInput ? (destacadoInput.value == 1) : false;
 
     if (id) {
         // Editar
         const index = productos.findIndex(p => p.id === parseInt(id));
-        productos[index] = { ...productos[index], nombre, descripcion, precio, imagen, status };
+        productos[index] = { 
+            ...productos[index], 
+            nombre, 
+            descripcion, 
+            precio, 
+            imagen, 
+            status,  // Guardamos como string 'active'/'inactive'
+            destacado
+        };
         showInfoModal('Éxito', 'Producto actualizado correctamente');
     } else {
-        // Nuevo
         const newId = Math.max(...productos.map(p => p.id), 0) + 1;
-        productos.push({ id: newId, nombre, descripcion, precio, categoria, imagen, status });
+        productos.push({ 
+            id: newId, 
+            nombre, 
+            descripcion, 
+            precio, 
+            categoria, 
+            imagen, 
+            status,  // Guardamos como string 'active'/'inactive'
+            destacado
+        });
         showInfoModal('Éxito', 'Producto creado correctamente');
     }
 
@@ -354,7 +384,6 @@ function saveItem(e) {
         renderProductos(currentSection);
     }
 }
-
 function confirmDeleteItem(id) {
     const item = productos.find(p => p.id === id);
     showDeleteModal(
@@ -429,7 +458,38 @@ function switchSection(section) {
         renderProductos(section);
     }
 }
-
+function actualizarEstrellaSimple(valor) {
+    const estrella = document.getElementById('estrellaSimple');
+    if (!estrella) {
+        console.error('No se encontró el elemento estrellaSimple');
+        return;
+    }
+    
+    const icon = estrella.querySelector('i');
+    const text = document.getElementById('destacadoText');
+    const input = document.getElementById('itemDestacado');
+    
+    if (!icon || !text || !input) {
+        console.error('Faltan elementos del selector de destacado');
+        return;
+    }
+    
+    // Actualizar el valor del input oculto
+    input.value = valor;
+    
+    // Actualizar la UI
+    if (valor == 1) {
+        estrella.classList.add('activado');
+        icon.className = 'fas fa-star';
+        text.textContent = 'Destacado ⭐';
+    } else {
+        estrella.classList.remove('activado');
+        icon.className = 'far fa-star';
+        text.textContent = 'No destacado';
+    }
+    
+    console.log('Estrella actualizada a:', valor); // Para debugging
+}
 // ===== CONFIGURACIÓN =====
 function loadConfigData() {
     document.getElementById('restaurantName').value = 'T.I.T.A Catering Service';
@@ -516,7 +576,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Iniciar en categorías
     switchSection('categorias');
 });
-
+ 
 // Funciones globales
 window.openCategoriaModal = openCategoriaModal;
 window.closeCategoriaModal = closeCategoriaModal;
@@ -528,4 +588,19 @@ window.confirmDeleteCategoria = confirmDeleteCategoria;
 window.confirmDeleteItem = confirmDeleteItem;
 window.switchSection = switchSection;
 window.setupDeleteButton = setupDeleteButton;
- 
+actualizarEstrellaSimple()
+document.addEventListener('DOMContentLoaded', () => {
+    const estrellaBtn = document.getElementById('estrellaSimple');
+    if (estrellaBtn) {
+        estrellaBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const destacadoInput = document.getElementById('itemDestacado');
+            const nuevoValor = destacadoInput.value == 1 ? 0 : 1;
+            
+            // Llamar a la función para actualizar la UI
+            actualizarEstrellaSimple(nuevoValor);
+        });
+    }
+});

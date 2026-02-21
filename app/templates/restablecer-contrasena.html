@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restablecer Contraseña - Conexion</title>
+     <link rel="stylesheet" href="{{ url_for('static', filename='css/restablcerContraStyle.css') }}"> 
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+     
+</head>
+<body>
+    
+    <div class="container">
+
+        <div class="logo">
+            <div class="logo-text">Paku</div>
+            <div class="logo-subtitle">Restaurante & Bar</div>
+        </div>
+
+        <!-- Estado de restablecimiento -->
+        <div class="reset-state" id="resetState">
+            <div class="icon-container">
+                <div class="icon">🔑</div>
+            </div>
+
+            <h1 class="title">Nueva Contraseña</h1>
+            <p class="subtitle">Crea una contraseña segura para tu cuenta</p>
+
+            <div class="token-status token-valid" id="tokenStatus">
+                ✅ Puedes restablecer tu contraseña
+            </div>
+<!-- Modal de confirmación -->
+<div id="successModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <div class="modal-icon">✅</div>
+        <h2>¡Contraseña actualizada!</h2>
+        <p>Tu contraseña se ha cambiado correctamente. Serás redirigido al inicio de sesión.</p>
+    </div>
+</div>
+
+            <form id="resetForm">
+                <!-- Campo: Nueva contraseña -->
+                <div class="form-group" style="position: relative;">
+                    <label class="form-label" for="newPassword">Nueva contraseña</label>
+                    <input type="password"
+                        id="newPassword"
+                        name="newPassword"
+                        class="form-input"
+                        placeholder="Ingresa tu nueva contraseña"
+                        required>
+                    <i id="toggleNewPassword" class="fa-solid fa-eye"
+                    style="position: absolute; right: 10px; top: 68%; transform: translateY(-50%); cursor: pointer; color: #555;"></i>
+
+                    <div class="password-strength" id="passwordStrength">
+                        <div class="password-strength-bar" id="passwordStrengthBar"></div>
+                    </div>
+                    <div class="strength-text" id="strengthText"></div>
+                    <div class="error-message" id="passwordError"></div>
+                    <div class="success-message" id="passwordSuccess"></div>
+                </div>
+
+<!-- Campo: Confirmar contraseña -->
+           <div class="form-group" style="position: relative;">
+                <label class="form-label" for="confirmPassword">Confirmar contraseña</label>
+                <input type="password"
+                    id="confirmPassword"
+                    class="form-input"
+                    placeholder="Confirma tu nueva contraseña"
+                    required>
+                <i id="toggleConfirmPassword" class="fa-solid fa-eye"
+                style="position: absolute; right: 10px; top: 68%; transform: translateY(-50%); cursor: pointer; color: #555;"></i>
+
+                <div class="error-message" id="confirmError"></div>
+                <div class="success-message" id="confirmSuccess"></div>
+            </div>
+
+
+                <div class="requirements">
+                    <div class="requirements-title">Requisitos de contraseña:</div>
+                    <div class="requirement" id="req-length">
+                        <div class="requirement-icon requirement-pending">✗</div>
+                        <span>Mínimo 8 caracteres</span>
+                    </div>
+                    <div class="requirement" id="req-uppercase">
+                        <div class="requirement-icon requirement-pending">✗</div>
+                        <span>Al menos una mayúscula</span>
+                    </div>
+                    <div class="requirement" id="req-lowercase">
+                        <div class="requirement-icon requirement-pending">✗</div>
+                        <span>Al menos una minúscula</span>
+                    </div>
+                    <div class="requirement" id="req-number">
+                        <div class="requirement-icon requirement-pending">✗</div>
+                        <span>Al menos un número</span>
+                    </div>
+                    <div class="requirement" id="req-special">
+                        <div class="requirement-icon requirement-pending">✗</div>
+                        <span>Al menos un carácter especial</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="primary-btn" id="resetBtn" disabled>
+                    Restablecer Contraseña
+                </button>
+            </form>
+
+           <a href="{{ url_for('auth.login') }}" class="secondary-btn">
+                 <span class="btn-icon">←</span>
+                 <span>Volver al inicio de sesión</span>
+            </a>
+        </div>
+
+            
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/restablecer.js') }}" > </script>
+    <script src="{{ url_for('static', filename='js/modalRes.js') }}" > </script>
+</body>
+</html>

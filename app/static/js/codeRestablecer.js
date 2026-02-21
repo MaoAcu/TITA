@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
         submitBtn.disabled = true;
         codeError.style.display = 'none';
 
-        fetch(CODE_URL, {
+        fetch('crede/validate_code', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ codigo: codigo })

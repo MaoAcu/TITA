@@ -32,6 +32,7 @@ def GetMenu():
             }
             for m in menus
         ]
+  
     
         return jsonify(data), 200
 

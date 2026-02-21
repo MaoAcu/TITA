@@ -22,6 +22,11 @@ def create_app():
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.secret_key = os.getenv("SECRET_KEY")
     
+    app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+        "pool_pre_ping": True,
+        "pool_recycle": 300,  
+    }
+    
     # Inicializa la base de datos
     db.init_app(app)
     email_service.init_app(app) 

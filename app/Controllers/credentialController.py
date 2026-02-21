@@ -44,10 +44,7 @@ def ValidarUsuarioRecovery():
         
 
         #   envia el correo
-        email_service.SendVerificationCode(
-            email=login.correo,
-            code=code
-        )
+        #email_service.SendVerificationCode(email=correo, code=code)
 
         return jsonify({
             'success': True,

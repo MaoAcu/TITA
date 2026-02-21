@@ -1,0 +1,202 @@
+:root {
+    --gold: #B5945D;
+    --dark-gold: #8e7345;
+    --success: #28a745;
+    --error: #d9534f;
+    --light-bg: #f9f9f9;
+}
+
+body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f4f4f4;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Reutilizando la tarjeta T.I.T.A. */
+.container {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+    border-top: 5px solid var(--gold);
+}
+
+/* Logo Circular Estilo TITA */
+.logo {
+    width: 110px;
+    height: 110px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--gold);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: white;
+}
+
+.logo-text {
+    font-family: 'Cinzel', serif;
+    font-weight: bold;
+    color: var(--gold);
+    font-size: 1.2rem;
+}
+
+.logo-subtitle {
+    font-size: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888;
+}
+
+.title {
+    font-family: 'Cinzel', serif;
+    color: var(--gold);
+    font-size: 1.6rem;
+    margin: 10px 0;
+}
+
+.subtitle {
+    font-size: 0.85rem;
+    color: #777;
+    margin-bottom: 20px;
+}
+
+/* Estado del Token */
+.token-status {
+    font-size: 0.8rem;
+    padding: 8px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    background: #e9f7ef;
+    color: var(--success);
+    font-weight: bold;
+}
+
+/* Formulario */
+.form-group {
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--gold);
+}
+
+/* Barra de Fortaleza */
+.password-strength {
+    height: 4px;
+    background: #eee;
+    margin-top: 8px;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.password-strength-bar {
+    height: 100%;
+    width: 0%;
+    transition: all 0.3s ease;
+}
+
+.strength-text {
+    font-size: 0.7rem;
+    margin-top: 4px;
+    text-align: right;
+    font-weight: bold;
+}
+
+/* Requisitos */
+.requirements {
+    background: var(--light-bg);
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+    text-align: left;
+}
+
+.requirements-title {
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.requirement {
+    display: flex;
+    align-items: center;
+    font-size: 0.75rem;
+    color: #777;
+    margin-bottom: 5px;
+}
+
+.requirement-icon {
+    margin-right: 8px;
+    font-weight: bold;
+}
+
+.requirement-pending { color: #ccc; }
+.requirement-valid { color: var(--success); }
+
+/* Botones */
+.primary-btn {
+    width: 100%;
+    padding: 15px;
+    background: var(--gold);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-family: 'Cinzel', serif;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.primary-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.primary-btn:hover:not(:disabled) {
+    background: var(--dark-gold);
+}
+
+.secondary-btn {
+    display: inline-block;
+    margin-top: 20px;
+    text-decoration: none;
+    color: #999;
+    font-size: 0.8rem;
+}
+
+.secondary-btn:hover { color: var(--gold); }
+
+/* Mensajes de Error/Éxito */
+.error-message { color: var(--error); font-size: 0.7rem; margin-top: 4px; }
+.success-message { color: var(--success); font-size: 0.7rem; margin-top: 4px; }

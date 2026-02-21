@@ -50,7 +50,7 @@ def login():
         idusuario = session.get("idusuario")
         
         app = current_app._get_current_object()
-        #threading.Thread(target=SendCode, args=(app,idusuario, correo)).start()
+        threading.Thread(target=SendCode, args=(app,idusuario, correo)).start()
         return redirect(url_for("routes.Codigo"))
 
     return render_template("login.html")
@@ -80,31 +80,32 @@ def SendCode(app,idusuario, correo):
        db.session.execute(sql_update, {"codigo": code, "idusuario": idusuario})
        db.session.commit()
 
-       email_service.SendVerificationCode(email=correo, code=code)
+       #email_service.SendVerificationCode(email=correo, code=code)
        
 @auth_bp.route("/verificar_codigo", methods=["GET", "POST"])
 def VerificarCodigo():
     if request.method == "POST":
         codigo_ingresado = request.form.get("codigo")
-        sql = text("""
-            SELECT codigo FROM login 
-            WHERE idusuario=:idusuario
-        """)
-        result = db.session.execute(sql, {"idusuario": session["idusuario"]}).fetchone()
-        print(type(codigo_ingresado), type(result.codigo))
-        if not result:
-            flash("Error interno", "error")
+        
+         
+        login = Login.query.filter_by(idusuario=session["idusuario"]).first()
+        
+        if not login:
+            flash("Error interno: usuario no encontrado", "error")
             return redirect(url_for("routes.Codigo"))
         
-        if str(codigo_ingresado).strip() != str(result.codigo).strip():
+        print(f"Tipo código ingresado: {type(codigo_ingresado)}, código DB: {type(login.codigo)}")
+        
+         
+        if str(codigo_ingresado).strip() != str(login.codigo).strip():
             flash("Código incorrecto", "error")
             return redirect(url_for("routes.Codigo"))
         
+       
+        login.codigo = None
+        db.session.commit()
         
-        sql_reset = text("UPDATE login SET codigo=NULL WHERE idusuario=:idusuario")
-        db.session.execute(sql_reset, {"idusuario": session["idusuario"]})
-        db.session.commit()   
-        session["Access"] =1
+        session["Access"] = 1
         return redirect(url_for("routes.dashboard"))
         
     return render_template("verificar_codigo.html")

@@ -833,3 +833,62 @@
                 flex-direction: column;
             }
         }
+
+        .estrellas-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 0;
+}
+
+.estrella-simple {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #ccc;
+    transition: all 0.2s;
+    padding: 0 10px;
+}
+
+.estrella-simple.activado {
+    color: var(--primary);
+}
+
+.estrella-simple.activado i {
+    font-weight: 900;
+}
+
+.estrella-simple:hover {
+    transform: scale(1.2);
+}
+
+#destacadoText {
+    font-size: 1rem;
+    color: #666;
+}
+
+item-image {
+    position: relative;
+}
+
+.destacado-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: var(--primary);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    z-index: 2;
+}
+
+.destacado-badge i {
+    font-size: 0.7rem;
+}
