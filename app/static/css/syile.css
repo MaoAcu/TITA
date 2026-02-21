@@ -449,121 +449,304 @@
       background: var(--primary);
       transform: scale(1.05);
     }
-
-    @media (max-width: 650px) {
-      .menu-grid {
-        grid-template-columns: 1fr;
-      }
-        .card-desc {
-        -webkit-line-clamp: 2;      
-        line-clamp: 2;               
-        min-height: calc(1.5em * 2);
-        font-size: 0.85rem;
+  .menu-grid::after {
+    content: '';
+    display: none;
+  }
+ 
+@media (max-width: 768px) {
+    /* Convertir el grid en carrusel horizontal */
+    .menu-grid {
+        display: flex !important;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        gap: 15px;
+        padding: 10px 5px 20px;
+        scrollbar-width: thin;
+        scrollbar-color: var(--primary) #ddd;
+        -webkit-overflow-scrolling: touch;
+        grid-template-columns: none !important; /* Anular grid */
     }
-     .card-desc.descripcion-larga {
+    
+    /* Estilo del scroll */
+    .menu-grid::-webkit-scrollbar {
+        height: 4px;
+    }
+    
+    .menu-grid::-webkit-scrollbar-track {
+        background: #efebe9;
+        border-radius: 10px;
+    }
+    
+    .menu-grid::-webkit-scrollbar-thumb {
+        background: var(--primary);
+        border-radius: 10px;
+    }
+    
+    /* Tarjetas como items del carrusel */
+    .menu-card {
+        flex: 0 0 85%;
+        max-width: 300px;
+        scroll-snap-align: start;
+        flex-direction: column !important; /* Forzar vertical */
+        margin-right: 0;
+        min-width: 260px; /* Ancho mínimo */
+    }
+    
+    /* Ajustar imagen para que ocupe todo el ancho */
+    .menu-card .card-img {
+        width: 100% !important;
+        height: 160px;
+        border-radius: var(--radius) var(--radius) 0 0 !important;
+    }
+    
+    /* Ajustar contenido */
+    .card-content {
+        padding: 12px;
+    }
+    
+    .card-content h4 {
+        font-size: 1.1rem;
+        margin-bottom: 4px;
+    }
+    
+    .card-desc {
         -webkit-line-clamp: 2;
         line-clamp: 2;
         min-height: calc(1.5em * 2);
         font-size: 0.85rem;
+        margin-bottom: 10px;
+    }
+    
+    .card-desc.descripcion-larga {
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        min-height: calc(1.5em * 2);
+    }
+    
+    .card-footer-row {
+        margin-top: 5px;
+    }
+    
+    .card-precio {
+        font-size: 1.3rem;
+    }
+    
+    .add-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.5rem;
     }
     
     .ver-mas-btn {
-        font-size: 0.8rem;
-    }
-      .menu-card {
-        flex-direction: row;
-        align-items: stretch;
-      }
-      .menu-card .card-img {
-        width: 130px;
-        height: 140px;
-        border-radius: var(--radius) 0 0 var(--radius);
-      }
-      .card-content {
-        padding: 15px 15px 15px 12px;
-      }
-      .card-content h4 { font-size: 1.2rem; }
-      .card-precio { font-size: 1.5rem; }
-    }
-
-    /* ===== MODAL DE IMAGEN ===== */
-    .image-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.9);
-      z-index: 2000;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
+        font-size: 0.75rem;
+        padding: 2px 0;
     }
     
-    .image-modal.active {
-      display: flex;
+    /* Ajustar títulos de categoría */
+    .category-title {
+        font-size: 1.4rem;
+        margin: 25px 0 15px;
     }
     
-    .image-modal-content {
-      position: relative;
-      max-width: 90%;
-      max-height: 90%;
+    /* Contenedor principal con padding */
+    .container {
+        padding: 0 4%;
+    }
+    
+    /* Indicador de deslizar */
+    .menu-grid::after {
+        content: '← Desliza →';
+        position: absolute;
+        right: 10px;
+        bottom: -20px;
+        font-size: 0.7rem;
+        color: #999;
+        background: rgba(255,255,255,0.9);
+        padding: 4px 10px;
+        border-radius: 20px;
+        pointer-events: none;
+    }
+    
+    .menu-grid {
+        position: relative;
+        margin-bottom: 30px;
+    }
+   .image-modal-content {
+        max-width: 95%;
     }
     
     .image-modal-content img {
-      width: 100%;
-      height: auto;
-      max-height: 80vh;
-      border-radius: 20px;
-      object-fit: contain;
+        max-height: 55vh;
     }
     
     .image-modal-info {
-      position: absolute;
-      bottom: -60px;
-      left: 0;
-      right: 0;
-      background: rgba(255,255,255,0.95);
-      padding: 20px 30px;
-      border-radius: 60px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      backdrop-filter: blur(10px);
+        padding: 15px 20px;
+        gap: 15px;
     }
     
     .image-modal-info h3 {
-      font-size: 1.5rem;
-      color: var(--dark);
+        font-size: 1.2rem;
+        white-space: normal;
+        word-break: break-word;
     }
     
     .image-modal-info p {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: var(--primary);
+        font-size: 1.4rem;
     }
     
     .close-image-modal {
-      position: absolute;
-      top: -50px;
-      right: 0;
-      background: rgba(255,255,255,0.2);
-      border: none;
-      color: white;
-      width: 50px;
-      height: 50px;
-      border-radius: 50px;
-      font-size: 1.5rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+        top: 10px;
+        right: 10px;
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
     }
-    .close-image-modal:hover {
-      background: rgba(255,255,255,0.3);
-    }
+}
 
+ 
+@media (min-width: 769px) {
+    .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 30px;
+    }
+    
+     
+    .menu-grid::after {
+        display: none;
+    }
+}
+@media (max-width: 480px) {
+    .menu-card {
+        flex: 0 0 90%;
+        max-width: 280px;
+    }
+    
+    .menu-card .card-img {
+        height: 140px;
+    }
+    .image-modal-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 15px;
+    }
+    
+    .image-modal-info h3 {
+        font-size: 1.1rem;
+    }
+    
+    .image-modal-info p {
+        font-size: 1.3rem;
+        align-self: flex-end;
+    }
+}
+/* ===== MODAL DE IMAGEN  ===== */
+.image-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.image-modal.active {
+    display: flex;
+    opacity: 1;
+}
+
+.image-modal-content {
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+    background: white; /* Fondo blanco para el contenedor */
+    display: flex;
+    flex-direction: column;
+}
+
+.image-modal.active .image-modal-content {
+    transform: scale(1);
+}
+
+.image-modal-content img {
+    width: 100%;
+    height: auto;
+    max-height: 60vh;
+    object-fit: contain;
+    display: block;
+    background: #f8f8f8; /* Fondo gris claro para la imagen */
+    padding: 10px;
+}
+
+/* Contenedor de información debajo de la imagen */
+.image-modal-info {
+    background: white;
+    color: var(--dark);
+    padding: 20px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.image-modal-info h3 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--dark);
+    flex: 1;
+}
+
+.image-modal-info p {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 0;
+    white-space: nowrap;
+}
+
+.close-image-modal {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(0, 0, 0, 0.6);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    z-index: 10;
+    backdrop-filter: blur(5px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.close-image-modal:hover {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+    transform: scale(1.1);
+    border-color: var(--primary);
+}
     /* ===== MODAL DEL CARRITO ===== */
     .cart-modal {
       display: none;

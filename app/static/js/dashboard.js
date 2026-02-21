@@ -337,6 +337,44 @@ function closeItemModal() {
     editingItem = null;
 }
 
+let selectedImageFile = null;
+
+// Event listener para el input file
+document.addEventListener('DOMContentLoaded', () => {
+    const fileInput = document.getElementById('itemImageFile');
+    if (fileInput) {
+        fileInput.addEventListener('change', handleImageSelect);
+    }
+});
+
+// Manejar selección de imagen
+function handleImageSelect(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Validar tipo de archivo
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+        showInfoModal('Error', 'Formato no válido. Use JPG, PNG o WEBP', 'exclamation-triangle');
+        return;
+    }
+    
+    // Mostrar nombre del archivo
+    document.getElementById('imageFileName').textContent = file.name;
+    
+    // Mostrar vista previa
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const preview = document.querySelector('#imagePreview img');
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+    
+    // Guardar archivo para enviar después
+    selectedImageFile = file;
+}
+
 function saveItem(e) {
     e.preventDefault();
     
@@ -345,59 +383,102 @@ function saveItem(e) {
     const nombre = document.getElementById('itemName').value;
     const descripcion = document.getElementById('itemDescription').value;
     const precio = parseFloat(document.getElementById('itemPrice').value);
-    const imagen = document.getElementById('itemImage').value || URL_IMG_DEFAULT;
-    const status = document.getElementById('itemStatus').value; // 'active' o 'inactive'
-    
+    const status = document.getElementById('itemStatus').value;
     const destacadoInput = document.getElementById('itemDestacado');
     const destacado = destacadoInput ? (destacadoInput.value == 1) : false;
-
-    if (id) {
-        // Editar
-        const index = productos.findIndex(p => p.id === parseInt(id));
-        productos[index] = { 
-            ...productos[index], 
-            nombre, 
-            descripcion, 
-            precio, 
-            imagen, 
-            status,  // Guardamos como string 'active'/'inactive'
-            destacado
-        };
-        showInfoModal('Éxito', 'Producto actualizado correctamente');
-    } else {
-        const newId = Math.max(...productos.map(p => p.id), 0) + 1;
-        productos.push({ 
-            id: newId, 
-            nombre, 
-            descripcion, 
-            precio, 
-            categoria, 
-            imagen, 
-            status,  // Guardamos como string 'active'/'inactive'
-            destacado
+    
+    // Crear FormData para enviar al backend
+    const formData = new FormData();
+    formData.append('nombre', nombre);
+    formData.append('descripcion', descripcion);
+    formData.append('precio', precio);
+    formData.append('categoria', categoria);
+    formData.append('estado', status);
+    formData.append('destacado', destacado ? '1' : '0');
+    
+    // Si hay imagen seleccionada, agregarla
+    if (selectedImageFile) {
+        formData.append('image', selectedImageFile);
+    }
+    
+    // Determinar URL y método según sea crear o editar
+    const url = id ? `/menu/menu/${id}` : '/menu/menu';
+    const method = id ? 'PATCH' : 'POST';
+    
+    // Mostrar loader
+    showLoader();
+    
+    // Enviar petición
+    fetch(url, {
+        method: method,
+        body: formData,
+        credentials: 'same-origin'
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLoader();
+        
+        if (data.error) {
+            showInfoModal('Error', data.error, 'exclamation-triangle');
+            return;
+        }
+        
+        // Recargar menú para obtener datos actualizados
+        cargarMenu().then(() => {
+            showInfoModal('Éxito', id ? 'Producto actualizado' : 'Producto creado', 'check-circle');
+            closeItemModal();
+            
+            // Limpiar el input file
+            document.getElementById('itemImageFile').value = '';
+            document.getElementById('imageFileName').textContent = '';
+            document.querySelector('#imagePreview img').style.display = 'none';
+            selectedImageFile = null;
         });
-        showInfoModal('Éxito', 'Producto creado correctamente');
-    }
-
-    closeItemModal();
-    if (currentSection !== 'categorias' && currentSection !== 'config') {
-        renderProductos(currentSection);
-    }
+    })
+    .catch(error => {
+        hideLoader();
+        console.error('Error:', error);
+        showInfoModal('Error', 'No se pudo guardar el producto', 'exclamation-triangle');
+    });
 }
 function confirmDeleteItem(id) {
     const item = productos.find(p => p.id === id);
     showDeleteModal(
         '¿Eliminar producto?',
-        `¿Estás seguro de eliminar "${item.nombre}"?`,
+        `¿Estás seguro de eliminar "${item.nombre}"? La imagen también será eliminada.`,
         () => {
-            productos = productos.filter(p => p.id !== id);
-            showInfoModal('Éxito', 'Producto eliminado correctamente');
-            if (currentSection !== 'categorias' && currentSection !== 'config') {
-                renderProductos(currentSection);
-            }
+            showLoader();
+            
+            fetch(`/menu/menu/${id}`, {
+                method: 'DELETE',
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                hideLoader();
+                
+                if (data.error) {
+                    showInfoModal('Error', data.error, 'exclamation-triangle');
+                    return;
+                }
+                
+                // Eliminar del array local
+                productos = productos.filter(p => p.id !== id);
+                showInfoModal('Éxito', 'Producto eliminado correctamente', 'check-circle');
+                
+                if (currentSection !== 'categorias' && currentSection !== 'config') {
+                    renderProductos(currentSection);
+                }
+            })
+            .catch(error => {
+                hideLoader();
+                console.error('Error:', error);
+                showInfoModal('Error', 'No se pudo eliminar el producto', 'exclamation-triangle');
+            });
         }
     );
 }
+
 
 // ===== FUNCIONES DE NAVEGACIÓN =====
 function toggleSidebar(forceState) {

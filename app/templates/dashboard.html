@@ -217,68 +217,83 @@
         <i class="fas fa-folder"></i>
         <span>Gestionar Categorías</span>
     </button>
-
+ 
     <!-- Modal para editar/agregar items -->
-    <div id="editModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modalTitle">Editar Item</h3>
-                <span class="close-modal" onclick="closeItemModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <form id="itemForm">
-                    <input type="hidden" id="itemId">
-                    <input type="hidden" id="itemCategoria">
-                    
-                    <div class="form-group">
-                        <label for="itemName">Nombre del Producto</label>
-                        <input type="text" id="itemName" required placeholder="Ej: Hamburguesa Especial">
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalTitle">Editar Item</h3>
+            <span class="close-modal" onclick="closeItemModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="itemForm" enctype="multipart/form-data">
+                <input type="hidden" id="itemId">
+                <input type="hidden" id="itemCategoria">
+                
+                <div class="form-group">
+                    <label for="itemName">Nombre del Producto</label>
+                    <input type="text" id="itemName" required placeholder="Ej: Hamburguesa Especial">
+                </div>
+                
+                <div class="form-group">
+                    <label for="itemDescription">Descripción</label>
+                    <textarea id="itemDescription" rows="3" placeholder="Describe el producto, ingredientes, etc."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="itemPrice">Precio (₡)</label>
+                    <div class="price-input">
+                        <span class="currency">₡</span>
+                        <input type="number" id="itemPrice" step="0.01" min="0" required placeholder="0.00">
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="itemDescription">Descripción</label>
-                        <textarea id="itemDescription" rows="3" placeholder="Describe el producto, ingredientes, etc."></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="itemPrice">Precio (₡)</label>
-                        <div class="price-input">
-                            <span class="currency">₡</span>
-                            <input type="number" id="itemPrice" step="0.01" min="0" required placeholder="0.00">
+                </div>
+                
+                <div class="form-group">
+                    <label for="itemImage">Imagen del Producto</label>
+                    <div class="image-upload-container">
+                        <input type="file" id="itemImageFile" accept=".jpg,.jpeg,.png,.webp" style="display: none;">
+                        <div class="image-preview" id="imagePreview">
+                            <img src="" alt="Vista previa" style="max-width: 100%; max-height: 150px; display: none;">
                         </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="itemImage">URL de la Imagen</label>
-                        <input type="text" id="itemImage" placeholder="https://ejemplo.com/imagen.jpg">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="itemStatus">Estado</label>
-                        <div class="status-toggle">
-                            <button type="button" class="status-btn active" data-status="active">Activo</button>
-                            <button type="button" class="status-btn" data-status="inactive">Inactivo</button>
-                            <input type="hidden" id="itemStatus" value="active">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>¿Destacado?</label>
-                        <div class="estrellas-container">
-                            <button type="button" class="estrella-simple" id="estrellaSimple" data-destacado="0">
-                                <i class="far fa-star"></i>
+                        <div class="image-actions">
+                            <button type="button" class="btn-image-upload" onclick="document.getElementById('itemImageFile').click()">
+                                <i class="fas fa-cloud-upload-alt"></i> Seleccionar imagen
                             </button>
-                            <span id="destacadoText">No destacado</span>
-                            <input type="hidden" id="itemDestacado" value="0">
+                            <span id="imageFileName" class="file-name"></span>
                         </div>
                     </div>
-                    <div class="form-actions">
-                        <button type="button" class="btn-cancel" onclick="closeItemModal()">Cancelar</button>
-                        <button type="submit" class="btn-save">Guardar</button>
+                    <small class="form-text">Formatos permitidos: JPG, PNG, WEBP. Se convertirá automáticamente a WEBP</small>
+                    <input type="hidden" id="itemImage" value="">
+                </div>
+                
+                <div class="form-group">
+                    <label for="itemStatus">Estado</label>
+                    <div class="status-toggle">
+                        <button type="button" class="status-btn active" data-status="active">Activo</button>
+                        <button type="button" class="status-btn" data-status="inactive">Inactivo</button>
+                        <input type="hidden" id="itemStatus" value="active">
                     </div>
-                </form>
-            </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>¿Destacado?</label>
+                    <div class="estrellas-container">
+                        <button type="button" class="estrella-simple" id="estrellaSimple" data-destacado="0">
+                            <i class="far fa-star"></i>
+                        </button>
+                        <span id="destacadoText">No destacado</span>
+                        <input type="hidden" id="itemDestacado" value="0">
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" onclick="closeItemModal()">Cancelar</button>
+                    <button type="submit" class="btn-save">Guardar</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
     <script>
         const URL_IMG_BASE = "{{ url_for('static', filename='images/') }}";
         const URL_IMG_DEFAULT="{{ url_for('static', filename='images/LogoT.I.T.A.webp') }}"

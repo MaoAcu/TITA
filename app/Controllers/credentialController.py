@@ -60,18 +60,18 @@ def ValidarUsuarioRecovery():
 def ValidateCode():
     try:
         data = request.get_json()
-        code_entered = data.get('code')
+        code_entered = data.get('codigo')
 
         idusuario = session.get('recovery_idusuario')
     
-
+        
         if not idusuario:
             return jsonify({'success': False, 'message': 'Sesión expirada.'})
 
         login = Login.query.filter_by(idusuario=idusuario).first()
         if not login:
             return jsonify({'success': False, 'message': 'Cuenta no encontrada.'})
-
+        print(login.codigo,  code_entered)
         if str(login.codigo) != str(code_entered):
             return jsonify({'success': False, 'message': 'Código incorrecto.'})
 
@@ -94,6 +94,7 @@ def ValidateCode():
 @credential_bp.route('/update_password', methods=['POST'])
 def UpdatePassword():
     try:
+        
         if not session.get('code_verified'):
             return jsonify({'success': False, 'message': 'No autorizado'}), 403
 

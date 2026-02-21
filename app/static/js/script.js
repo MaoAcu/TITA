@@ -4,8 +4,6 @@ let carrito = [];
 let filtroCategoria = 'todas';
 let busqueda = '';
 
- 
-
 // Elementos del DOM
 const cartCountHeaderDesktop = document.getElementById('cartCountHeaderDesktop');
 const cartCountHeaderMobile = document.getElementById('cartCountHeaderMobile');
@@ -36,6 +34,7 @@ const modalImageTitle = document.getElementById('modalImageTitle');
 const modalImagePrice = document.getElementById('modalImagePrice');
 const closeImageModal = document.getElementById('closeImageModal');
 
+// ===== FUNCIONES DE LOADER =====
 function showLoader() {
     const loader = document.getElementById('loader');
     if (loader) loader.classList.remove('hidden');
@@ -46,9 +45,9 @@ function hideLoader() {
     if (loader) loader.classList.add('hidden');
 }
 
-// Modifica tu función cargarMenu():
+// ===== FUNCIÓN PARA CARGAR MENÚ =====
 async function cargarMenu() {
-    showLoader(); // Mostrar loader antes de la petición
+    showLoader();
     
     try {
         const response = await fetch('/menu/getmenu');
@@ -67,12 +66,9 @@ async function cargarMenu() {
             categoria: item.categoria,
             imagen: item.imagen ? `${URL_IMG_BASE}${item.imagen}` : URL_IMG_DEFAULT,
             destacado: Boolean(item.destacado),
-            status: item.estado || 'active'
+            status: item.estado === '1' ? 'active' : 'inactive'
         }));
         
-         
-        
-        // Inicializa después de cargar
         init();
         
     } catch (error) {
@@ -81,17 +77,52 @@ async function cargarMenu() {
         init();
         
     } finally {
-        hideLoader(); // Oculta el loader cuando termina  
+        hideLoader();
     }
 }
-// ===== FUNCIONES =====
 
-// Inicializar filtros de categoría
+// ===== FUNCIONES DE MODAL DE IMAGEN =====
+function abrirModalImagen(producto) {
+    if (!imageModal || !modalImage || !modalImageTitle || !modalImagePrice) {
+        console.error('Elementos del modal no encontrados');
+        return;
+    }
+    
+    modalImage.src = producto.imagen;
+    modalImage.alt = producto.nombre;
+    modalImageTitle.textContent = producto.nombre;
+    modalImagePrice.textContent = '₡' + producto.precio.toLocaleString('es-CR');
+    
+    // Forzar estilos para asegurar visibilidad
+    imageModal.style.display = 'flex';
+    setTimeout(() => {
+        imageModal.classList.add('active');
+    }, 10);
+}
+
+function cerrarModalImagen() {
+    if (!imageModal) return;
+    
+    imageModal.classList.remove('active');
+    setTimeout(() => {
+        imageModal.style.display = 'none';
+    }, 300); // Coincide con la transición CSS
+}
+
+// Función global para abrir modal por ID
+window.abrirModalImagenPorId = function(id) {
+    const producto = productos.find(p => p.id === id);
+    if (producto) {
+        abrirModalImagen(producto);
+    } else {
+        console.error('Producto no encontrado:', id);
+    }
+};
+
+// ===== FUNCIONES DE FILTROS =====
 function initCategoryFilters() {
-    // Obtener categorias unicas de los productos
     const categoriasUnicas = ['todas', ...new Set(productos.map(p => p.categoria))];
     
-    // Mapa de nombres para mostrar  
     const nombresCategoria = {
         'todas': 'Todas',
         'entradas': 'Entradas',
@@ -137,23 +168,28 @@ function filtrarProductos() {
     renderizarMenu(productosFiltrados);
 }
 
-// Abrir modal de imagen
-function abrirModalImagen(producto) {
-    modalImage.src = producto.imagen;
-    modalImage.alt = producto.nombre;
-    modalImageTitle.textContent = producto.nombre;
-    modalImagePrice.textContent = '₡' + producto.precio.toLocaleString('es-CR');
-    imageModal.classList.add('active');
-}
+// ===== FUNCIÓN TOGGLE DESCRIPCIÓN =====
+window.toggleDescripcion = function(id, event) {
+    if (event) {
+        event.stopPropagation();
+    }
+    
+    const desc = document.getElementById(`desc-${id}`);
+    const btn = event ? event.target : document.querySelector(`[onclick*="toggleDescripcion(${id})"]`);
+    
+    if (!desc || !btn) return;
+    
+    desc.classList.toggle('expandido');
+    
+    if (desc.classList.contains('expandido')) {
+        btn.textContent = 'Ver menos';
+    } else {
+        btn.textContent = 'Ver más';
+    }
+};
 
-// Cerrar modal de imagen
-function cerrarModalImagen() {
-    imageModal.classList.remove('active');
-}
-// Renderizar menú
-// Renderizar menú
+// ===== RENDERIZAR MENÚ =====
 function renderizarMenu(productosAMostrar) {
-    // Agrupar por categoría
     const agrupados = {};
     productosAMostrar.forEach(p => {
         if (!agrupados[p.categoria]) agrupados[p.categoria] = [];
@@ -178,32 +214,33 @@ function renderizarMenu(productosAMostrar) {
 
     let html = '';
     
-    // Título principal
     html += '<h2 class="section-title"><i class="fas fa-leaf"></i> Nuestra cocina</h2>';
     
-    // Cada categoría
     for (const [categoria, items] of Object.entries(agrupados)) {
         html += `<section><h3 class="category-title"><i class="fas ${iconosCategoria[categoria] || 'fa-circle'}"></i> ${nombresCategoria[categoria] || categoria}</h3>`;
         html += '<div class="menu-grid">';
         
         items.forEach(p => {
-            // Determinar si la descripción es larga (más de 100 caracteres o 3 líneas aproximadas)
-            const esDescripcionLarga = p.descripcion.length > 100;
+            const esDescripcionLarga = p.descripcion.length > 110;
+            // Escapar comillas para evitar errores HTML
+            const descripcionEscapada = p.descripcion.replace(/"/g, '&quot;');
             
             html += `
                 <div class="menu-card" data-id="${p.id}">
-                    <img class="card-img" src="${p.imagen}" alt="${p.nombre}" onerror="this.src='${URL_IMG_DEFAULT}'" onclick="abrirModalImagenPorId(${p.id})">
+                    <div class="img-container" onclick="abrirModalImagenPorId(${p.id})">
+                        <img class="card-img" src="${p.imagen}" alt="${p.nombre}" onerror="this.src='${URL_IMG_DEFAULT}'">
+                    </div>
                     <div class="card-content">
                         <h4 onclick="abrirModalImagenPorId(${p.id})">${p.nombre}</h4>
                         <div class="descripcion-container">
-                            <p class="card-desc ${esDescripcionLarga ? 'descripcion-larga' : ''}" id="desc-${p.id}">${p.descripcion}</p>
+                            <p class="card-desc ${esDescripcionLarga ? 'descripcion-larga' : ''}" id="desc-${p.id}" title="${descripcionEscapada}">${p.descripcion}</p>
                             ${esDescripcionLarga ? 
-                                `<button class="ver-mas-btn" onclick="event.stopPropagation(); toggleDescripcion(${p.id})">Ver más</button>` 
+                                `<button class="ver-mas-btn" onclick="toggleDescripcion(${p.id}, event)">Ver más</button>` 
                                 : ''}
                         </div>
                         <div class="card-footer-row">
                             <span class="card-precio">₡${p.precio.toLocaleString('es-CR')}</span>
-                            <button class="add-btn" onclick="event.stopPropagation(); agregarAlCarrito(${p.id}, this)"><i class="fas fa-plus"></i></button>
+                            <button class="add-btn" onclick="agregarAlCarrito(${p.id}, this, event)"><i class="fas fa-plus"></i></button>
                         </div>
                     </div>
                 </div>
@@ -216,37 +253,9 @@ function renderizarMenu(productosAMostrar) {
     menuContainer.innerHTML = html;
 }
 
-// Función para expandir/colapsar descripción
-window.toggleDescripcion = function(id) {
-    const desc = document.getElementById(`desc-${id}`);
-    const btn = event.target;
-    
-    desc.classList.toggle('expandido');
-    
-    if (desc.classList.contains('expandido')) {
-        btn.textContent = 'Ver menos';
-    } else {
-        btn.textContent = 'Ver más';
-    }
-    
-    event.stopPropagation(); // Evitar que el clic se propague a la tarjeta
-};
-// Función para abrir modal por ID (global para que funcione desde onclick)
-window.abrirModalImagenPorId = function(id) {
-    const producto = productos.find(p => p.id === id);
-    if (producto) {
-        abrirModalImagen(producto);
-    }
-};
-
-// Renderizar carrusel de destacados
+// ===== RENDERIZAR CARRUSEL DE DESTACADOS =====
 function renderizarCarrusel() {
-    // Ahora sí funciona porque destacado es booleano
     const destacados = productos.filter(p => p.destacado === true).slice(0, 5);
-    
-    // O más simple:
-    // const destacados = productos.filter(p => p.destacado).slice(0, 5);
-    
     let html = '';
     
     if (destacados.length === 0) {
@@ -263,7 +272,7 @@ function renderizarCarrusel() {
                     <p>${p.descripcion.substring(0, 40)}...</p>
                     <div class="card-footer-row">
                         <span class="card-precio">₡${p.precio.toLocaleString('es-CR')}</span>
-                        <button class="add-btn" onclick="event.stopPropagation(); agregarAlCarrito(${p.id}, this)"><i class="fas fa-plus"></i></button>
+                        <button class="add-btn" onclick="event.stopPropagation(); agregarAlCarrito(${p.id}, this, event)"><i class="fas fa-plus"></i></button>
                     </div>
                 </div>
             </div>
@@ -273,8 +282,12 @@ function renderizarCarrusel() {
     carouselContainer.innerHTML = html;
 }
 
-// Agregar al carrito
-window.agregarAlCarrito = function(id, boton) {
+// ===== FUNCIONES DEL CARRITO =====
+window.agregarAlCarrito = function(id, boton, event) {
+    if (event) {
+        event.stopPropagation();
+    }
+    
     const producto = productos.find(p => p.id === id);
     if (!producto) return;
     
@@ -291,14 +304,12 @@ window.agregarAlCarrito = function(id, boton) {
     actualizarCarritoUI();
 };
 
-// Quitar del carrito
 window.quitarDelCarrito = function(carritoId) {
     carrito = carrito.filter(item => item.carritoId !== carritoId);
     actualizarCarritoUI();
     renderizarModalCarrito();
 };
 
-// Actualizar UI del carrito (contador)
 function actualizarCarritoUI() {
     const totalProductos = carrito.length;
     
@@ -310,7 +321,6 @@ function actualizarCarritoUI() {
     }
 }
 
-// Renderizar modal del carrito
 function renderizarModalCarrito() {
     if (carrito.length === 0) {
         cartModalBody.innerHTML = '<div style="text-align: center; padding: 40px; color: #888;">Carrito vacío</div>';
@@ -340,18 +350,15 @@ function renderizarModalCarrito() {
     modalTotal.innerText = '₡' + total.toLocaleString('es-CR');
 }
 
-// Abrir modal carrito
 function abrirModalCarrito() {
     renderizarModalCarrito();
     cartModal.classList.add('active');
 }
 
-// Cerrar modal carrito
 function cerrarModalCarrito() {
     cartModal.classList.remove('active');
 }
 
-// Enviar por WhatsApp
 function enviarWhatsApp() {
     if (carrito.length === 0) return;
     const telefono = '50684523300';
@@ -364,13 +371,12 @@ function enviarWhatsApp() {
     window.open(`https://wa.me/${telefono}?text=${mensaje}`, '_blank');
 }
 
-// Búsqueda
+// ===== FUNCIONES DE NAVEGACIÓN =====
 function buscar() {
     busqueda = searchInput.value.trim();
     filtrarProductos();
 }
 
-// Navegación entre páginas
 function mostrarHome() {
     homePage.classList.remove('hidden');
     homePage.style.display = 'block';
@@ -395,13 +401,11 @@ function mostrarAbout() {
 
 // ===== FUNCIÓN DE INICIALIZACIÓN =====
 function init() {
-    // Verificar si hay productos antes de inicializar
     if (productos.length > 0) {
         initCategoryFilters();
         renderizarCarrusel();
         filtrarProductos();
     } else {
-        // Mostrar mensaje de que no hay productos
         menuContainer.innerHTML = '<p style="text-align: center; padding: 50px;">No hay productos disponibles</p>';
         carouselContainer.innerHTML = '<p style="text-align: center; padding: 20px;">No hay productos destacados</p>';
     }
@@ -411,52 +415,102 @@ function init() {
 }
 
 // ===== EVENT LISTENERS =====
-if (cartIconHeaderDesktop) {
-    cartIconHeaderDesktop.addEventListener('click', (e) => {
-        e.preventDefault();
-        abrirModalCarrito();
-    });
-}
-
-if (cartIconHeaderMobile) {
-    cartIconHeaderMobile.addEventListener('click', (e) => {
-        e.preventDefault();
-        abrirModalCarrito();
-    });
-}
-
-closeModalBtn.addEventListener('click', cerrarModalCarrito);
-
-modalWhatsAppBtn.addEventListener('click', () => {
-    enviarWhatsApp();
-});
-
-// Cerrar modal carrito al hacer clic fuera
-cartModal.addEventListener('click', (e) => {
-    if (e.target === cartModal) cerrarModalCarrito();
-});
-
-// Cerrar modal imagen al hacer clic en botón o fuera
-closeImageModal.addEventListener('click', cerrarModalImagen);
-imageModal.addEventListener('click', (e) => {
-    if (e.target === imageModal) cerrarModalImagen();
-});
-
-searchBtn.addEventListener('click', buscar);
-searchInput.addEventListener('input', () => {
-    busqueda = searchInput.value.trim();
-    filtrarProductos();
-});
-
-linkHome.addEventListener('click', (e) => { e.preventDefault(); mostrarHome(); });
-linkAbout.addEventListener('click', (e) => { e.preventDefault(); mostrarAbout(); });
-backToHomeBtn.addEventListener('click', (e) => { e.preventDefault(); mostrarHome(); });
-
-menuToggle.addEventListener('click', () => {
-    navLinks.classList.toggle('active');
-});
-
-// ===== INICIAR LA APLICACIÓN CARGANDO EL MENÚ =====
 document.addEventListener('DOMContentLoaded', () => {
+    // Cargar menú
     cargarMenu();
+    
+    // Event listeners del carrito
+    if (cartIconHeaderDesktop) {
+        cartIconHeaderDesktop.addEventListener('click', (e) => {
+            e.preventDefault();
+            abrirModalCarrito();
+        });
+    }
+
+    if (cartIconHeaderMobile) {
+        cartIconHeaderMobile.addEventListener('click', (e) => {
+            e.preventDefault();
+            abrirModalCarrito();
+        });
+    }
+
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', cerrarModalCarrito);
+    }
+
+    if (modalWhatsAppBtn) {
+        modalWhatsAppBtn.addEventListener('click', enviarWhatsApp);
+    }
+
+    // Cerrar modal carrito al hacer clic fuera
+    if (cartModal) {
+        cartModal.addEventListener('click', (e) => {
+            if (e.target === cartModal) cerrarModalCarrito();
+        });
+    }
+
+    // Event listeners del modal de imagen
+    if (closeImageModal) {
+        closeImageModal.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            cerrarModalImagen();
+        });
+    }
+
+    if (imageModal) {
+        imageModal.addEventListener('click', (e) => {
+            if (e.target === imageModal) cerrarModalImagen();
+        });
+    }
+
+    // Búsqueda
+    if (searchBtn) {
+        searchBtn.addEventListener('click', buscar);
+    }
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            busqueda = searchInput.value.trim();
+            filtrarProductos();
+        });
+    }
+
+    // Navegación
+    if (linkHome) {
+        linkHome.addEventListener('click', (e) => { 
+            e.preventDefault(); 
+            mostrarHome(); 
+        });
+    }
+    
+    if (linkAbout) {
+        linkAbout.addEventListener('click', (e) => { 
+            e.preventDefault(); 
+            mostrarAbout(); 
+        });
+    }
+    
+    if (backToHomeBtn) {
+        backToHomeBtn.addEventListener('click', (e) => { 
+            e.preventDefault(); 
+            mostrarHome(); 
+        });
+    }
+
+    // Menú hamburguesa
+    if (menuToggle) {
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+    }
 });
+
+// Funciones globales
+window.abrirModalCarrito = abrirModalCarrito;
+window.cerrarModalCarrito = cerrarModalCarrito;
+window.enviarWhatsApp = enviarWhatsApp;
+window.abrirModalImagenPorId = abrirModalImagenPorId;
+window.agregarAlCarrito = agregarAlCarrito;
+window.quitarDelCarrito = quitarDelCarrito;
+window.toggleDescripcion = toggleDescripcion;
