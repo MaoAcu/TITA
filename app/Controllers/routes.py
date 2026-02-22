@@ -19,11 +19,12 @@ def service_worker():
     return send_from_directory(os.path.join(current_app.root_path, 'static'), 'service-worker.js')
 
 
-# @loginRequired
-# @codigoRequired
-# @localRequired(1,3)
-# @noCache
+ 
 @routes_bp.route("/dashboard", endpoint="dashboard")
+@loginRequired
+@codigoRequired
+@localRequired(1,3)
+@noCache
 def DashBoard():
     return render_template('dashboard.html')
 
@@ -51,6 +52,7 @@ def RecuperarContrasena():
 
 @routes_bp.route("/Codigo", endpoint="Codigo")
 @loginRequired
+@noCache
 def codigo_verificacion():
     return render_template('codigo-verificacion.html')
 

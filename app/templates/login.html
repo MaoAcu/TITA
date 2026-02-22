@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | T.I.T.A. Catering</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/Loginstyle.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/popupstyle.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
 </head>
@@ -19,7 +20,15 @@
             <h1>Bienvenido</h1>
             <p>Sabor & Estilo en cada detalle</p>
         </header>
-
+        <div id="flash-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+        </div>
           <form method="post" action="{{ url_for('auth.login') }}">
                 <div class="form-group">
                     <label class="form-label" for="usuario">
@@ -49,6 +58,6 @@
             </form>
     </div>
     <script src="{{ url_for('static', filename='js/LoginScript.js') }}" > </script>
-   
+    <script src="{{url_for('static', filename='js/popup.js')}}"></script>
 </body>
 </html>

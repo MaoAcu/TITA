@@ -765,7 +765,7 @@
                 height: 100vh;
                 z-index: 99;
             }
-
+          
             .sidebar.active {
                 transform: translateX(0);
             }
@@ -814,6 +814,16 @@
                 bottom: 20px;
                 right: 20px;
             }
+             .image-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .btn-image-upload,
+    .btn-image-remove {
+        width: 100%;
+        justify-content: center;
+    }
         }
 
         @media (max-width: 480px) {
@@ -956,4 +966,96 @@ item-image {
     margin-top: 5px;
     color: #999;
     font-size: 0.8rem;
+}
+
+
+/*delete image*/
+.image-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.btn-image-remove {
+    background: #fee;
+    color: #e74c3c;
+    border: 2px solid #fdd;
+    padding: 12px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.btn-image-remove:hover {
+    background: #fdd;
+    border-color: #e74c3c;
+    transform: translateY(-2px);
+}
+
+.btn-image-remove i {
+    font-size: 1.1rem;
+}
+
+
+/*   LOADER   */
+.loader-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(5px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.loader-container.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.spinner {
+    width: 60px;
+    height: 60px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid var(--primary, #f75c2f);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loader-container p {
+    color: var(--dark, #333);
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+/* Loader pequeño para botones (opcional) */
+.btn-loader {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s linear infinite;
+    margin-right: 10px;
 }

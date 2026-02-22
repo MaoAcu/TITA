@@ -117,3 +117,23 @@ header p {
 .footer-links a:hover {
     color: var(--gold);
 }
+
+/* En tu archivo codigoVerificacion.css */
+.loader {
+    display: inline-block;
+    margin-left: 10px;
+    animation: rotate 1.5s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Estilo opcional para que el botón no cambie de tamaño al mostrar el loader */
+.btn-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 200px; /* Ajusta según tu diseño */
+}

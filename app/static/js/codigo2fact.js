@@ -40,3 +40,22 @@ const inputs = document.querySelectorAll('.otp-input');
                 if (!/[0-9]/.test(e.key)) e.preventDefault();
             });
         });
+document.addEventListener('DOMContentLoaded', () => {
+    const otpForm = document.getElementById('otp-form');
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = submitBtn.querySelector('.btn-text');
+    const loader = submitBtn.querySelector('.loader');
+
+    otpForm.addEventListener('submit', function() {
+        // 1. Desactivar el botón para evitar que el usuario haga doble clic
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = "0.7";
+        submitBtn.style.cursor = "not-allowed";
+
+        // 2. Cambiar el texto y mostrar el loader (el emoji o el icono)
+        btnText.textContent = "VERIFICANDO...";
+        loader.style.display = "inline-block";
+
+        
+    });
+});

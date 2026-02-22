@@ -17,9 +17,10 @@ let categorias = [
     {id: 4, nombre: 'Desayunos', icono: 'fa-coffee', slug: 'desayunos' },
     { id: 5, nombre: 'Promociones', icono: 'fa-tags', slug: 'promos' }
 ];
-
+ 
 let productos = [];
 async function cargarMenu() {
+    showLoader();
     try {
         const response = await fetch('/menu/getmenu');  
 
@@ -39,10 +40,14 @@ async function cargarMenu() {
             destacado: Boolean(item.destacado),
             status: item.estado === '1' ? 'active' : 'inactive'
         }));
-        
-        
+        if (currentSection === 'categorias') {
+            renderCategorias();
+        } else if (currentSection !== 'config') {
+            renderProductos(currentSection);
+        }
+        hideLoader()
         return productos;  
-
+        
     } catch (error) {
         console.error('Error cargando menú:', error);
         productos = [];  
@@ -75,7 +80,7 @@ function setupDeleteButton() {
         const newBtn = confirmDeleteBtn.cloneNode(true);
         confirmDeleteBtn.parentNode.replaceChild(newBtn, confirmDeleteBtn);
         
-        // Agregar el nuevo event listener
+        // Agrega el nuevo event listener
         newBtn.addEventListener('click', function() {
             if (deleteCallback) {
                 deleteCallback();
@@ -129,7 +134,7 @@ function asignarEventosSidebar() {
     }
 }
 
-// ===== FUNCIONES DE CATEGORÍAS =====
+ 
 function renderCategorias() {
     const grid = document.getElementById('categoriasGrid');
     const lista = document.getElementById('categoriasList');
@@ -336,8 +341,57 @@ function closeItemModal() {
     document.getElementById('editModal').classList.remove('active');
     editingItem = null;
 }
+function showLoader() {
+    const loader = document.getElementById('loader');
+    if (loader) {
+        loader.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+}
 
-let selectedImageFile = null;
+function hideLoader() {
+    const loader = document.getElementById('loader');
+    if (loader) {
+        loader.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+}
+
+ let selectedImageFile = null;
+let currentImageUrl = null;  
+
+ 
+function resetImageUpload() {
+    // Limpiar el input file
+    const fileInput = document.getElementById('itemImageFile');
+    if (fileInput) fileInput.value = '';
+    
+    // Limpiar vista previa
+    const preview = document.querySelector('#imagePreview img');
+    if (preview) {
+        preview.src = '';
+        preview.style.display = 'none';
+    }
+    
+    // Limpiar nombre de archivo
+    const fileName = document.getElementById('imageFileName');
+    if (fileName) fileName.textContent = '';
+    
+    // Resetear variables
+    selectedImageFile = null;
+    currentImageUrl = null;
+}
+function removeCurrentImage() {
+    // Mostrar confirmación
+    if (confirm('¿Eliminar la imagen actual? Podrás subir una nueva después.')) {
+        // Limpiar todo
+        resetImageUpload();
+        
+        // Mostrar mensaje
+        showInfoModal('Imagen eliminada', 'Puedes subir una nueva imagen', 'info-circle');
+    }
+}
+ 
 
 // Event listener para el input file
 document.addEventListener('DOMContentLoaded', () => {
@@ -345,8 +399,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (fileInput) {
         fileInput.addEventListener('change', handleImageSelect);
     }
+    
+    // Event listener para botón de eliminar imagen
+    const removeImageBtn = document.getElementById('removeImageBtn');
+    if (removeImageBtn) {
+        removeImageBtn.addEventListener('click', removeCurrentImage);
+    }
 });
-
 // Manejar selección de imagen
 function handleImageSelect(event) {
     const file = event.target.files[0];
@@ -375,38 +434,47 @@ function handleImageSelect(event) {
     selectedImageFile = file;
 }
 
+// Función saveItem actualizada
 function saveItem(e) {
     e.preventDefault();
     
     const id = document.getElementById('itemId').value;
-    const categoria = document.getElementById('itemCategoria').value;
+    
+    // Obtener valores de los campos
     const nombre = document.getElementById('itemName').value;
     const descripcion = document.getElementById('itemDescription').value;
+    const categoria = document.getElementById('categoria').value;
     const precio = parseFloat(document.getElementById('itemPrice').value);
-    const status = document.getElementById('itemStatus').value;
+    const estado = document.getElementById('itemStatus').value;
     const destacadoInput = document.getElementById('itemDestacado');
-    const destacado = destacadoInput ? (destacadoInput.value == 1) : false;
+    const destacado = destacadoInput ? (destacadoInput.value == 1 ? '1' : '0') : '0';
+    const subcategoria = document.getElementById('itemSubcategoria')?.value || '';
     
-    // Crear FormData para enviar al backend
+    // Validaciones básicas
+    if (!nombre || !precio || !categoria) {
+        showInfoModal('Error', 'Nombre, precio y categoría son obligatorios', 'exclamation-triangle');
+        return;
+    }
+    
+    // Crear FormData con los nombres que espera el backend
     const formData = new FormData();
     formData.append('nombre', nombre);
     formData.append('descripcion', descripcion);
     formData.append('precio', precio);
     formData.append('categoria', categoria);
-    formData.append('estado', status);
-    formData.append('destacado', destacado ? '1' : '0');
+    formData.append('estado', estado);
+    formData.append('destacado', destacado);
+    formData.append('subcategoria', subcategoria);
     
-    // Si hay imagen seleccionada, agregarla
+    // Si hay imagen seleccionada, agregarla con el nombre 'image'
     if (selectedImageFile) {
         formData.append('image', selectedImageFile);
     }
     
-    // Determinar URL y método según sea crear o editar
+    // Determinar URL y método
     const url = id ? `/menu/menu/${id}` : '/menu/menu';
     const method = id ? 'PATCH' : 'POST';
-    
-    // Mostrar loader
-    showLoader();
+   
     
     // Enviar petición
     fetch(url, {
@@ -414,32 +482,80 @@ function saveItem(e) {
         body: formData,
         credentials: 'same-origin'
     })
-    .then(response => response.json())
-    .then(data => {
-        hideLoader();
-        
-        if (data.error) {
-            showInfoModal('Error', data.error, 'exclamation-triangle');
-            return;
+    .then(async response => {
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.error || 'Error en la petición');
         }
-        
-        // Recargar menú para obtener datos actualizados
+        return data;
+    })
+    .then(data => {
+        showInfoModal('Éxito', id ? 'Producto actualizado' : 'Producto creado', 'check-circle');
         cargarMenu().then(() => {
-            showInfoModal('Éxito', id ? 'Producto actualizado' : 'Producto creado', 'check-circle');
             closeItemModal();
-            
-            // Limpiar el input file
-            document.getElementById('itemImageFile').value = '';
-            document.getElementById('imageFileName').textContent = '';
-            document.querySelector('#imagePreview img').style.display = 'none';
-            selectedImageFile = null;
         });
     })
     .catch(error => {
-        hideLoader();
         console.error('Error:', error);
-        showInfoModal('Error', 'No se pudo guardar el producto', 'exclamation-triangle');
+        showInfoModal('Error', error.message || 'No se pudo guardar el producto', 'exclamation-triangle');
     });
+}
+ 
+// Función para abrir modal (actualizada)
+function openItemModal(id = null, categoriaDefault = null) {
+    editingItem = id ? productos.find(p => p.id === id) : null;
+    
+    document.getElementById('modalTitle').textContent = editingItem ? 'Editar Producto' : 'Nuevo Producto';
+    document.getElementById('itemId').value = editingItem?.id || '';
+    
+    // Llenar campos
+    document.getElementById('itemName').value = editingItem?.nombre || '';
+    document.getElementById('itemDescription').value = editingItem?.descripcion || '';
+    document.getElementById('itemPrice').value = editingItem?.precio || '';
+    
+    // Seleccionar categoría
+    const categoriaSelect = document.getElementById('categoria');
+    if (categoriaSelect) {
+        categoriaSelect.value = editingItem?.categoria || categoriaDefault || '';
+    }
+    
+    // Estado
+    const status = editingItem?.status || 'active';
+    document.getElementById('itemStatus').value = status;
+    document.querySelectorAll('.status-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.status === status) {
+            btn.classList.add('active');
+        }
+    });
+    
+    // Destacado
+    const destacado = editingItem?.destacado ? 1 : 0;
+    if (typeof actualizarEstrellaSimple === 'function') {
+        actualizarEstrellaSimple(destacado);
+    }
+    
+    // Subcategoría (si existe)
+    const subcategoriaInput = document.getElementById('itemSubcategoria');
+    if (subcategoriaInput && editingItem?.subcategoria) {
+        subcategoriaInput.value = editingItem.subcategoria;
+    }
+    
+    // Resetear imagen
+    resetImageUpload();
+    
+    // Si tiene imagen, mostrarla
+    if (editingItem?.imagen && editingItem.imagen !== URL_IMG_DEFAULT) {
+        const preview = document.querySelector('#imagePreview img');
+        if (preview) {
+            preview.src = editingItem.imagen;
+            preview.style.display = 'block';
+        }
+        const fileName = document.getElementById('imageFileName');
+        if (fileName) fileName.textContent = `📁 ${editingItem.imagen.split('/').pop()}`;
+    }
+    
+    document.getElementById('editModal').classList.add('active');
 }
 function confirmDeleteItem(id) {
     const item = productos.find(p => p.id === id);
@@ -447,7 +563,7 @@ function confirmDeleteItem(id) {
         '¿Eliminar producto?',
         `¿Estás seguro de eliminar "${item.nombre}"? La imagen también será eliminada.`,
         () => {
-            showLoader();
+           // showLoader();
             
             fetch(`/menu/menu/${id}`, {
                 method: 'DELETE',
@@ -455,7 +571,7 @@ function confirmDeleteItem(id) {
             })
             .then(response => response.json())
             .then(data => {
-                hideLoader();
+               // hideLoader();
                 
                 if (data.error) {
                     showInfoModal('Error', data.error, 'exclamation-triangle');
@@ -571,7 +687,7 @@ function actualizarEstrellaSimple(valor) {
     
     console.log('Estrella actualizada a:', valor); // Para debugging
 }
-// ===== CONFIGURACIÓN =====
+ 
 function loadConfigData() {
     document.getElementById('restaurantName').value = 'T.I.T.A Catering Service';
     document.getElementById('restaurantDescription').value = 'Servicio de catering con los mejores platos tradicionales';
@@ -582,7 +698,7 @@ function saveConfig() {
     showInfoModal('Configuración', 'Configuración guardada correctamente');
 }
 
-// ===== EVENT LISTENERS =====
+ 
 document.addEventListener('DOMContentLoaded', () => {
     // Animaciones
     const style = document.createElement('style');
@@ -596,7 +712,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     loadConfigData();
     cargarMenu().then(() => {
-        // Esto se ejecuta DESPUÉS de que los datos se carguen
+        // Esto se ejecuta despues de que los datos se carguen
         renderCategorias();
         switchSection('categorias');
     });
@@ -625,12 +741,16 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Logout
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
+            logoutBtn.addEventListener('click', (e) => {
+        // Evitamos cualquier acción por defecto
+            e.preventDefault();
+
             showDeleteModal(
-                'Cerrar sesión',
-                '¿Estás seguro de que deseas salir?',
-                () => {
-                    window.location.href = '/login';
+                'Cerrar sesión', 
+                '¿Estás seguro de que deseas salir del sistema?', 
+               () => {
+                 
+                    window.location.href = URL_LOG ;
                 }
             );
         });
