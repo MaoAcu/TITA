@@ -60,6 +60,7 @@ def convertir_destacado(destacado_str):
     if destacado_str is None:
         return None
     return True if destacado_str == '1' else False
+
 @menu_bp.route("/getmenu", methods=["GET"])
 def GetMenu():
     try:
@@ -85,7 +86,9 @@ def GetMenu():
 
     except Exception as e:
         print(f"[ERROR get_menu]: {e}")
-        return jsonify({"error": "No se pudo obtener el menú"}), 500@menu_bp.route("/menu", methods=["POST"])
+        return jsonify({"error": "No se pudo obtener el menú"}), 500
+    
+@menu_bp.route("/createItem", methods=["POST"])
 def CreateMenuSection():
     try:
         data = request.form
@@ -123,7 +126,7 @@ def CreateMenuSection():
             # Guardar directamente como WebP
             img.save(filepath, 'WEBP', quality=85, optimize=True)
             
-            print(f"✅ Imagen guardada como WebP: {filename}")
+           
 
         # Convertir destacado
         destacado_str = data.get('destacado', '0')
@@ -134,7 +137,7 @@ def CreateMenuSection():
         estado_num = 1 if estado_str == 'active' else 0
 
         menu = Menu(
-            local=1,
+            local=3,
             nombre=data.get('nombre'),
             descripcion=data.get('descripcion'),
             precio=data.get('precio'),

@@ -29,31 +29,28 @@ class EmailService:
             logger.info(f"  EmailService iniciado - Enviando como {self.sender_name}")
 
     def _send_smtp(self, to_email, subject, html_content, text_content=None):
-       
         try:
             msg = MIMEMultipart('alternative')
             msg["From"] = f"{self.sender_name} <{self.sender_email}>"
             msg["To"] = to_email
             msg["Subject"] = subject
-            
+            msg["Reply-To"] = self.sender_email
+            msg["X-Mailer"] = "TITA-Mailer/1.0"
+
             if text_content:
-                msg.attach(MIMEText(text_content, 'plain'))
-            msg.attach(MIMEText(html_content, 'html'))
+               msg.attach(MIMEText(text_content, 'plain', 'utf-8'))
+            msg.attach(MIMEText(html_content, 'html', 'utf-8'))
             
-            
-            server = smtplib.SMTP_SSL(self.smtp_server, self.smtp_port, timeout=15)
-            
-          
-            server.login(self.sender_email, self.password)
+            server = smtplib.SMTP("localhost", timeout=10)
             server.sendmail(self.sender_email, to_email, msg.as_string())
             server.quit()
-            
-            logger.info(f"  Correo enviado exitosamente a {to_email}")
+
+            logger.info(f"Correo enviado correctamente a {to_email}")
             return True
-            
+
         except Exception as e:
-            logger.error(f" Error en SMTP (Puerto {self.smtp_port}): {e}")
-            return False
+           logger.error(f"Error SMTP local: {e}")
+           return False
 
     def SendVerificationCode(self, email, code, username=None):
         """Envía el código con el diseño Premium Gold de T.I.T.A."""
@@ -137,19 +134,10 @@ class EmailService:
             Si no solicitaste este código, por favor ignora este correo.
             """
             
-            # Ejecución en segundo plano para no ralentizar la respuesta del servidor
-            thread = threading.Thread(
-                target=self._send_smtp,
-                args=(email, subject, html, text),
-                daemon=True
-            )
-            thread.start()
             
-            logger.info(f" Envío encolado exitosamente para {email}")
-            return True
+            logger.info(f" Iniciando proceso de envío para {email}")
+            return self._send_smtp(email, subject, html, text)
             
         except Exception as e:
             logger.error(f" Error preparando el paquete de envío para {email}: {e}")
             return False
-
- 

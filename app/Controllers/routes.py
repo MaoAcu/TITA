@@ -19,7 +19,7 @@ def service_worker():
     return send_from_directory(os.path.join(current_app.root_path, 'static'), 'service-worker.js')
 
 
- 
+
 @routes_bp.route("/dashboard", endpoint="dashboard")
 @loginRequired
 @codigoRequired

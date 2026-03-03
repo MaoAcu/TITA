@@ -9,11 +9,13 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    min-height: 100vh;  
+    min-height: 100dvh;  
     background-color: #f8f8f8;
     font-family: 'Montserrat', sans-serif;
+    padding: 20px;  
+    box-sizing: border-box;
 }
-
 /* Tarjeta Principal */
 .login-card {
     background: #fff;

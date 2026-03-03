@@ -1,7 +1,2 @@
 flask==3.1.2
-flask_sqlalchemy
-sqlalchemy
-bcrypt
-Pillow
-cryptography
-pymysql
+dotenv
